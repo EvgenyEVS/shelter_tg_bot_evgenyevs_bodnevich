@@ -3,6 +3,8 @@ package pro.sky.telegrambot.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 
@@ -13,18 +15,26 @@ import javax.persistence.*;
 @EqualsAndHashCode(of = "id")
 @ToString
 
-public abstract class Animal {
+public abstract class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
     protected String name;
-    protected Integer age;
+    protected LocalDate birthDay;
     protected Gender gender = Gender.UNKNOWN;
     protected boolean castratedOrSpayed;
+    protected PetStatus petStatus = PetStatus.NOT_AVAILABLE;
+    protected String pet_description;
+    protected String healthInfo;
+    protected String specialNeeds;
 
     @ManyToOne
     protected User owner;
+
+
+
+    // связь с приютом организовать в наследниках, т.к. БД разные
 
 
 
@@ -32,6 +42,13 @@ public abstract class Animal {
         MALE,
         FEMALE,
         UNKNOWN
+    }
+
+    protected enum PetStatus {
+        AVAILABLE,
+        ON_TRIAL,
+        ADOPTED,
+        NOT_AVAILABLE
     }
 
 

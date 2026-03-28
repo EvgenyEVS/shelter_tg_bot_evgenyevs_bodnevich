@@ -30,7 +30,7 @@ public class User {
     private String phoneNumber;
 
     //@OneToMany()
-    private Set<Animal> pets = new HashSet<>();
+    private Set<Pet> pets = new HashSet<>();
 
     //@OneToMany()
     private List<Report> userReports = new ArrayList<>();
@@ -46,12 +46,6 @@ public class User {
 //    private Volunteer assignedVolunteer;
 
 
-
-    public enum ShelterType {
-        SHELTER_UNKNOWN,
-        SHELTER_CAT,
-        SHELTER_DOG
-    }
     public enum UserStatus {
         ORDINARY,
         ADOPTER,
