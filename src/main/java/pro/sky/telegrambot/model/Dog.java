@@ -1,4 +1,4 @@
 package pro.sky.telegrambot.model;
 
-public class Dog extends Animal{
+public class Dog extends Pet {
 }
