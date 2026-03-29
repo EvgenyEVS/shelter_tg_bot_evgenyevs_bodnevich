@@ -4,12 +4,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.sky.telegrambot.model.Cat;
+import pro.sky.telegrambot.repository.CatRepository;
 
 import java.util.List;
 
 
 @RestController
 @RequestMapping("/cats")
-public class CatController {
+public class CatController implements PetController {
 
+    public Cat createCat (Cat cat) {
+        return null;
+    }
 }

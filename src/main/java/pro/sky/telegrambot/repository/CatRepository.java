@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CatRepository extends JpaRepository<Cat, Long> {
     Cat findCatById(Long id);
+
+
 }
