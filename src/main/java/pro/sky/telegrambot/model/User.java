@@ -29,11 +29,11 @@ public class User {
     private Integer age;
     private String phoneNumber;
 
-    //@OneToMany()
+    @OneToMany(mappedBy = "owner")
     private Set<Pet> pets = new HashSet<>();
 
-    //@OneToMany()
-    private List<Report> userReports = new ArrayList<>();
+//    @OneToMany()
+//    private List<Report> userReports = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private ShelterType shelterType = ShelterType.SHELTER_UNKNOWN;

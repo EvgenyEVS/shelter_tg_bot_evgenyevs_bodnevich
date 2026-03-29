@@ -14,7 +14,7 @@ import java.util.Date;
 @Setter
 @EqualsAndHashCode(of = "id")
 @ToString
-@MappedSuperclass
+@Inheritance
 
 public abstract class Pet {
 
