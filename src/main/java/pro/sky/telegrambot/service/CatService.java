@@ -16,6 +16,15 @@ public class CatService {
     @Autowired
     public CatService(CatRepository catRepository) {this.catRepository = catRepository;}
 
+    /**
+     * Creating Cat Entity and save in DB.
+     * Validating data implemented in DTO.
+     * In default, for creating Cat, you need write in
+     * Cat's "name", "birthday", "gender".
+     *
+     * @param catCreateDto
+     * @return Cat (savedCat)
+     */
     public Cat addCat(CatCreateDto catCreateDto) {
 
         Cat cat = new Cat();
@@ -27,6 +36,11 @@ public class CatService {
         return savedCat;
     }
 
+    /**
+     * Return List<Cat>, who contains all Cats saved in DB.
+     * No parameters.
+     * @return List<Cat>
+     */
     public List<Cat> getAllCats() {
         return catRepository.findAll();
     }
