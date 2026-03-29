@@ -6,6 +6,8 @@ import pro.sky.telegrambot.dto.CatCreateDto;
 import pro.sky.telegrambot.model.Cat;
 import pro.sky.telegrambot.repository.CatRepository;
 
+import java.util.List;
+
 @Service
 public class CatService {
 
@@ -23,5 +25,9 @@ public class CatService {
 
         Cat savedCat = catRepository.save(cat);
         return savedCat;
+    }
+
+    public List<Cat> getAllCats() {
+        return catRepository.findAll();
     }
 }
