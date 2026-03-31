@@ -35,8 +35,6 @@ public class User {
 //    @OneToMany()
 //    private List<Report> userReports = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    private ShelterType shelterType = ShelterType.SHELTER_UNKNOWN;
 
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus = UserStatus.NON_ACTIVE;
