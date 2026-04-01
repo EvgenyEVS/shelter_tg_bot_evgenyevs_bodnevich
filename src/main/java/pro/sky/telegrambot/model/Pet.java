@@ -38,5 +38,5 @@ public class Pet {
     @ManyToOne
     protected User owner;
 
-
+    //
 }
