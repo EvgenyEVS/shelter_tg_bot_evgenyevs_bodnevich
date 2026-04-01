@@ -6,6 +6,7 @@ import pro.sky.telegrambot.model.enums.Gender;
 import pro.sky.telegrambot.model.enums.PetType;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 
 public record PetDto(
 
-        @NotBlank(message = "Обязательно при создании определить тип питомца (например, CAT или DOG)")
+        @NotNull(message = "Обязательно при создании определить тип питомца (например, CAT или DOG)")
         PetType petType,
 
         @NotBlank(message = "Name не может быть пустым")
