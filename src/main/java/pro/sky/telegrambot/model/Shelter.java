@@ -1,4 +1,4 @@
 package pro.sky.telegrambot.model;
 
-public class ShelterAbstract {
+public class Shelter {
 }
