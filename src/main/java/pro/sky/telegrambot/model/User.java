@@ -17,6 +17,7 @@ import java.util.Set;
 @EqualsAndHashCode(of = "chatId")
 @ToString
 
+// Class user
 public class User {
 
     @Id
