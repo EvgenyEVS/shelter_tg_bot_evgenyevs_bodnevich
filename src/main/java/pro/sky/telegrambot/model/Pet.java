@@ -1,6 +1,7 @@
 package pro.sky.telegrambot.model;
 
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import pro.sky.telegrambot.model.enums.Gender;
 import pro.sky.telegrambot.model.enums.PetStatus;
 import pro.sky.telegrambot.model.enums.PetType;
@@ -22,21 +23,21 @@ public class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
-    protected PetType petType = PetType.UNKNOWN;
+    private Long id;
+    private PetType petType = PetType.UNKNOWN;
 
-    protected String name;
-    protected LocalDate birthDay;
-    protected Gender gender = Gender.UNKNOWN;
-    protected boolean castratedOrSpayed;
-    protected PetStatus petStatus = PetStatus.NOT_AVAILABLE;
-    protected String pet_description;
-    protected String healthInfo;
-    protected String specialNeeds;
+    private String name;
+    private LocalDate birthDay;
+    private Gender gender = Gender.UNKNOWN;
+    private boolean castratedOrSpayed;
+    private PetStatus petStatus = PetStatus.NOT_AVAILABLE;
+    private String pet_description;
+    private String healthInfo;
+    private String specialNeeds;
 
 
-    @ManyToOne
-    protected User owner;
+    //@ManyToOne
+    //protected User owner;
 
-    //
+
 }
