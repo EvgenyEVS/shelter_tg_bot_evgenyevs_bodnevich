@@ -2,8 +2,11 @@ package pro.sky.telegrambot.model;
 
 import com.pengrad.telegrambot.model.User;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -26,12 +29,8 @@ public class Shelter {
     private String contacts;
     private String safetyPrecautionsAtShelter;
 
-    //@ManyToOne
-    private User user;
 
-
-
-
-
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Pet> pets = new ArrayList<>();
 
 }
