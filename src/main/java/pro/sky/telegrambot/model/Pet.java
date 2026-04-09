@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @Setter
 @EqualsAndHashCode(of = "id")
 @ToString
-@Inheritance
 
 public class Pet {
 
@@ -35,9 +34,10 @@ public class Pet {
     private String healthInfo;
     private String specialNeeds;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shelter_id")
+    private Shelter shelter;
 
     //@ManyToOne
     //protected User owner;
-
-
 }
