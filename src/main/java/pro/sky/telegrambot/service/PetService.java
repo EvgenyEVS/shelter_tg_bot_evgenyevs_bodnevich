@@ -31,7 +31,6 @@ public class PetService {
      * Creating Pet Entity and save in DB.
      * Validating data implemented in DTO.
      *
-     * @param petDto
      * @return Cat (savedPet)
      */
     public Pet addPet(PetDto petDto) {

@@ -1,5 +1,6 @@
 package pro.sky.telegrambot.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pengrad.telegrambot.model.User;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,15 @@ public class Shelter {
     private String shelterInfo;
     private String address;
     private String shelterSchedule; // расписание
-    private String routeSchemaUrl; // схема проезда в картинке. Хранится удаленно, получаем по URL
+    private String routeSchemaUrl; // Схема проезда в картинке. Хранится удаленно, получаем по URL
     private String contacts;
     private String safetyPrecautionsAtShelter;
 
+    //Бот может принять и записать контактные данные для связи.
+
 
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Pet> pets = new ArrayList<>();
 
 }

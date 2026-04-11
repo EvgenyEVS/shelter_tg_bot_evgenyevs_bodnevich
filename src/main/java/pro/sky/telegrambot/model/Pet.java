@@ -23,14 +23,22 @@ public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
     private PetType petType = PetType.UNKNOWN;
 
     private String name;
     private LocalDate birthDay;
+
+    @Enumerated(EnumType.STRING)
     private Gender gender = Gender.UNKNOWN;
+
     private boolean castratedOrSpayed;
+
+    @Enumerated(EnumType.STRING)
     private PetStatus petStatus = PetStatus.NOT_AVAILABLE;
-    private String pet_description;
+
+    private String petDescription;
     private String healthInfo;
     private String specialNeeds;
 
