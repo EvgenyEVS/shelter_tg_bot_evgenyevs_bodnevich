@@ -3,54 +3,51 @@ package pro.sky.telegrambot.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = "chatId")
-@ToString
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = "pets")
 
-// Class user
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "chat_id", unique = true, nullable = false)
     private Long chatId;
 
+    @Column(name = "telegram_user_name")
     private String telegramUserName;
+
+    @Column(name = "first_name")
     private String firstName;
+
+    @Column(name = "last_name")
     private String lastName;
+
     private Integer age;
+
+    @Pattern(regexp = "^\\+7-9\\d{2}-\\d{3}-\\d{2}-\\d{2}$", message = "Номер телефона должен быть в формате +7-9XX-XXX-XX-XX")
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Pet> pets = new HashSet<>();
-
-//    @OneToMany()
-//    private List<Report> userReports = new ArrayList<>();
-
 
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus = UserStatus.NON_ACTIVE;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "assigned_volunteer_id")
-//    private Volunteer assignedVolunteer;
-
-
     public enum UserStatus {
-        ORDINARY,
-        ADOPTER,
-        GRADUATED,
-        NON_ACTIVE
+        ORDINARY, ADOPTER, GRADUATED, NON_ACTIVE
     }
-
-
 }
