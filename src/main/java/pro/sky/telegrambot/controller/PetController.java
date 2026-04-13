@@ -12,6 +12,7 @@ import pro.sky.telegrambot.service.PetService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 //http://localhost:8080/swagger-ui/index.html
 
@@ -48,5 +49,31 @@ public class PetController {
     public ResponseEntity<List<Pet>> getAllPets() {
         return ResponseEntity.ok(petService.getAllPets());
     }
+
+    @GetMapping("/{id}")
+    public Optional<Pet> getById(Long id) {
+        return petService.getPetById(id);
+    }
+
+    @GetMapping("/cats")
+    public ResponseEntity<List<Pet>> getCats() {
+        return ResponseEntity.ok(petService.getCats());
+    }
+
+    @GetMapping("/dogs")
+    public ResponseEntity<List<Pet>> getDogs() {
+        return ResponseEntity.ok(petService.getDogs());
+    }
+
+    @GetMapping("/unknown_type")
+    public ResponseEntity<List<Pet>> getUnknown() {
+        return ResponseEntity.ok(petService.getUnknown());
+    }
+
+    @PutMapping("/{id}")
+    public Pet updatePet(Long id, PetDto petDto) {
+        return petService.updatePet(id, petDto);
+    }
+
 
 }
