@@ -1,6 +1,7 @@
 package pro.sky.telegrambot.model;
 
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import pro.sky.telegrambot.model.enums.Gender;
 import pro.sky.telegrambot.model.enums.PetStatus;
 import pro.sky.telegrambot.model.enums.PetType;
@@ -16,27 +17,35 @@ import java.time.LocalDate;
 @Setter
 @EqualsAndHashCode(of = "id")
 @ToString
-@Inheritance
 
 public class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
-    protected PetType petType = PetType.UNKNOWN;
+    private Long id;
 
-    protected String name;
-    protected LocalDate birthDay;
-    protected Gender gender = Gender.UNKNOWN;
-    protected boolean castratedOrSpayed;
-    protected PetStatus petStatus = PetStatus.NOT_AVAILABLE;
-    protected String pet_description;
-    protected String healthInfo;
-    protected String specialNeeds;
+    @Enumerated(EnumType.STRING)
+    private PetType petType = PetType.UNKNOWN;
 
+    private String name;
+    private LocalDate birthDay;
 
-    @ManyToOne
-    protected User owner;
+    @Enumerated(EnumType.STRING)
+    private Gender gender = Gender.UNKNOWN;
 
-    //
+    private boolean castratedOrSpayed;
+
+    @Enumerated(EnumType.STRING)
+    private PetStatus petStatus = PetStatus.NOT_AVAILABLE;
+
+    private String petDescription;
+    private String healthInfo;
+    private String specialNeeds;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shelter_id")
+    private Shelter shelter;
+
+    //@ManyToOne
+    //protected User owner;
 }
