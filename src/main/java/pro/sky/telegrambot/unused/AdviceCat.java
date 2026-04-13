@@ -1,4 +1,4 @@
-package pro.sky.telegrambot.model;
+package pro.sky.telegrambot.unused;
 
 public class AdviceCat extends AdviceAbstract{
 }

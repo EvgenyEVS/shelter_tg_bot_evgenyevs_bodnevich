@@ -46,6 +46,7 @@ public class Pet {
     @JoinColumn(name = "shelter_id")
     private Shelter shelter;
 
-    //@ManyToOne
-    //protected User owner;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    protected User owner;
 }
