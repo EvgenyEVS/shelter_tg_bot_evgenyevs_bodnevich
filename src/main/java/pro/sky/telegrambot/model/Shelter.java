@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -24,7 +22,9 @@ public class Shelter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private PetType petType;
+
     private String shelterInfo;
     private String address;
     private String shelterSchedule; // расписание

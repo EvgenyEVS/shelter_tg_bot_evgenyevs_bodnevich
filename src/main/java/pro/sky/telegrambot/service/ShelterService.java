@@ -3,6 +3,7 @@ package pro.sky.telegrambot.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.dto.shelterDto.ShelterContactsDto;
+import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterGeneralInfoDto;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
@@ -24,7 +25,20 @@ public class ShelterService {
         this.shelterRepository = shelterRepository;
     }
 
-    public Shelter createShelter (Shelter shelter) {
+    public Shelter createShelter (ShelterCreateDto createDto) {
+        Shelter shelter = new Shelter();
+
+        if(createDto.getPetType() != null && !createDto.getPetType().isEmpty()){
+        shelter.setPetType(PetType.valueOf(createDto.getPetType()));}
+        else {shelter.setPetType(PetType.UNKNOWN);}
+
+        shelter.setShelterInfo(createDto.getShelterInfo());
+        shelter.setAddress(createDto.getAddress());
+        shelter.setShelterSchedule(createDto.getShelterSchedule());
+        shelter.setRouteSchemaUrl(createDto.getRouteSchemaUrl());
+        shelter.setContacts(createDto.getContacts());
+        shelter.setSafetyPrecautionsAtShelter(createDto.getSafetyPrecautionsAtShelter());
+
         return shelterRepository.save(shelter);
     }
 

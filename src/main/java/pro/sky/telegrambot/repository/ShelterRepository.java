@@ -7,7 +7,7 @@ import pro.sky.telegrambot.model.enums.PetType;
 import javax.swing.text.html.Option;
 import java.util.Optional;
 
-public interface ShelterRepository extends JpaRepository<Shelter, PetType> {
+public interface ShelterRepository extends JpaRepository<Shelter, Long> {
 
     Optional<Shelter> findShelterByPetType(PetType petType);
 }
