@@ -2,7 +2,9 @@ package pro.sky.telegrambot.controller;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import pro.sky.telegrambot.dto.shelterDto.ShelterContactsDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterGeneralInfoDto;
 import pro.sky.telegrambot.model.Shelter;
@@ -11,7 +13,7 @@ import pro.sky.telegrambot.service.ShelterService;
 
 import javax.validation.Valid;
 
-@RestController
+@Controller
 @RequestMapping("/shelter")
 public class ShelterController {
 
@@ -30,17 +32,17 @@ public class ShelterController {
     }
 
     @GetMapping()
-    public Shelter getShelter(@RequestParam PetType petType) {
+    public Shelter getShelter(PetType petType) {
         return shelterService.getShelterByPetType(petType);
     }
 
     @GetMapping("/general_info")
-    public ShelterGeneralInfoDto getGeneralInfo(@RequestParam PetType petType) {
+    public ShelterGeneralInfoDto getGeneralInfo(PetType petType) {
         return shelterService.getGeneralInfo(petType);
     }
 
     @GetMapping("/contacts")
-    public ShelterContactsDto get_contacts(@RequestParam PetType petType) {
+    public ShelterContactsDto get_contacts(PetType petType) {
         return shelterService.getContacts(petType);
     }
 
