@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +48,18 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus = UserStatus.NON_ACTIVE;
 
+    private boolean volunter = false;
+
+    @Enumerated(EnumType.STRING)
+    private UserDialogState dialogState = UserDialoge.START;
+
+    private LocalDateTime adoptionalStartDate;
+
     public enum UserStatus {
         ORDINARY, ADOPTER, GRADUATED, NON_ACTIVE
+    }
+
+    public enum UserDialogState {
+        START, SHELTER_INFO, ADOPTION_ADVICE, REPORT, WAITING_VOLUNTEER, WAITING_PHONE
     }
 }
