@@ -28,7 +28,11 @@ public class Adoption {
 
     private LocalDate startDate;
 
+    @Builder.Default
+    private int missedDays = 0;
+
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private ProbationStatus probationStatus = ProbationStatus.IN_PROGRESS;
 
     private LocalDate probationEndDate;

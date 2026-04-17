@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-
 public class Report {
 
     @Id
@@ -33,8 +32,10 @@ public class Report {
     private String behaviorChanges;
 
     @Column(nullable = false)
+    @Builder.Default
     private LocalDateTime submittedAt = LocalDateTime.now();
 
+    @Builder.Default
     private boolean reviewed = false;
 
     private String volunteerFeedback;

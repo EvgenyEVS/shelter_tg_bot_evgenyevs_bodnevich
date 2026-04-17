@@ -11,4 +11,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByUserAndReportDate(User user, LocalDate date);
     List<Report> findByReviewedFalse();
     List<Report> findByUserOrderByReportDateDesc(User user);
+    boolean existsByUserAndReportDate(User user, LocalDate date);
 }
