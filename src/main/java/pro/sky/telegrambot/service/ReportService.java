@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.ReportDto;
 import pro.sky.telegrambot.model.Report;
+import pro.sky.telegrambot.model.User;
 import pro.sky.telegrambot.repository.ReportRepository;
 import pro.sky.telegrambot.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,25 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final UserRepository userRepository;
     private final TelegramBot telegramBot;
+
+    public void saveReport(Long chatId, String photoUrl, String diet, String health, String behavior) {
+        User user = userRepository.findByChatId(chatId).orElseThrow();
+        Report report = Report.builder()
+                .user(user)
+                .reportDate(LocalDate.now())
+                .photoUrl(photoUrl)
+                .diet(diet)
+                .healthAndAdaptation(health)
+                .behaviorChanges(behavior)
+                .submittedAt(java.time.LocalDateTime.now())
+                .reviewed(false)
+                .build();
+        reportRepository.save(report);
+    }
+
+    public boolean hasReportForDate(User user, LocalDate date) {
+        return reportRepository.existsByUserAndReportDate(user, date);
+    }
 
     @Transactional(readOnly = true)
     public List<ReportDto> getUnreviewedReports() {
@@ -39,23 +60,19 @@ public class ReportService {
 
     @Transactional(readOnly = true)
     public ReportDto getReportDtoById(Long id) {
-        Report report = reportRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Отчет не найден: " + id));
-        return toDto(report);
+        return toDto(reportRepository.findById(id).orElseThrow());
     }
 
     @Transactional
     public void sendVolunteerFeedback(Long reportId, String feedback) {
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new EntityNotFoundException("Отчет не найден: " + reportId));
+        Report report = reportRepository.findById(reportId).orElseThrow();
         report.setVolunteerFeedback(feedback);
         reportRepository.save(report);
 
         String message = "Уважаемый усыновитель, мы заметили, что ты заполняешь отчет не так подробно, как необходимо. " +
                 "Пожалуйста, подойди ответственнее к этому заданию. В противном случае волонтеры будут обязаны " +
                 "самолично проверять условия содержания животного.\n\nКомментарий волонтера: " + feedback;
-        SendMessage sendMessage = new SendMessage(report.getUser().getChatId(), message);
-        telegramBot.execute(sendMessage);
+        telegramBot.execute(new SendMessage(report.getUser().getChatId(), message));
     }
 
     private ReportDto toDto(Report report) {
@@ -68,7 +85,7 @@ public class ReportService {
                 .healthAndAdaptation(report.getHealthAndAdaptation())
                 .behaviorChanges(report.getBehaviorChanges())
                 .reviewed(report.isReviewed())
-                .volinteerFeedback(report.getVolunteerFeedback())
-                .build()
+                .volunteerFeedback(report.getVolunteerFeedback())
+                .build();
     }
 }

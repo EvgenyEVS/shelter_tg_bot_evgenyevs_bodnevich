@@ -10,6 +10,7 @@ import pro.sky.telegrambot.model.enums.PetType;
 import javax.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @NoArgsConstructor

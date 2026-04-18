@@ -13,8 +13,21 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
+
+    public User getOrCreateUser(Long chatId, com.pengrad.telegrambot.model.User tgUser) {
+        return userRepository.findByChatId(chatId).orElseGet(() -> {
+            User newUser = new User();
+            newUser.setChatId(chatId);
+            newUser.setTelegramUserName(tgUser.username());
+            newUser.setFirstName(tgUser.firstName());
+            newUser.setLastName(tgUser.lastName());
+            newUser.setUserStatus(User.UserStatus.NON_ACTIVE);
+            newUser.setVolunter(false);
+            newUser.setDialogState(User.UserDialogState.START);
+            return userRepository.save(newUser);
+        });
+    }
 
     @Transactional
     public User createUser(UserDto dto) {
@@ -46,8 +59,11 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long id) {
-        User user = getUserById(id);
-        userRepository.delete(user);
+        userRepository.delete(getUserByChatId(id));
+    }
+
+    public List<User> getVolunteers() {
+        return userRepository.findByVolunterTrue();
     }
 
     private void mapDtoToEntity(UserDto dto, User entity) {

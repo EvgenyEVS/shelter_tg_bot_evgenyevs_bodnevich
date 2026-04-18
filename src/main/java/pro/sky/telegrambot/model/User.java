@@ -51,7 +51,7 @@ public class User {
     private boolean volunter = false;
 
     @Enumerated(EnumType.STRING)
-    private UserDialogState dialogState = UserDialoge.START;
+    private UserDialogState dialogState = UserDialogState.START;
 
     private LocalDateTime adoptionalStartDate;
 
@@ -60,6 +60,15 @@ public class User {
     }
 
     public enum UserDialogState {
-        START, SHELTER_INFO, ADOPTION_ADVICE, REPORT, WAITING_VOLUNTEER, WAITING_PHONE
+        START,
+        SHELTER_INFO,
+        ADOPTION_ADVICE,
+        REPORT,
+        WAITING_VOLUNTEER,
+        WAITING_PHONE,
+        WAITING_REPORT_PHOTO,
+        WAITING_REPORT_DIET,
+        WAITING_REPORT_HEALTH,
+        WAITING_REPORT_BEHAVIOR
     }
 }

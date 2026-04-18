@@ -20,5 +20,5 @@ public class ReportDto {
     private String healthAndAdaptation;
     private String behaviorChanges;
     private boolean reviewed;
-    private String volinteerFeedback;
+    private String volunteerFeedback;
 }
