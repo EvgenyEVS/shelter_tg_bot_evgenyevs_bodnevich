@@ -35,9 +35,9 @@ public record PetDto(
         PetStatus petStatus,
         String pet_description,
         String healthInfo,
-        String specialNeeds,
+        String specialNeeds
 
-        @JsonIgnore
-        Shelter shelter
+    //    @JsonIgnore
+    //    Shelter shelter
 ) {
 }
