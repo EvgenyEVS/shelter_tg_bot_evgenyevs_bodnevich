@@ -3,12 +3,14 @@ package pro.sky.telegrambot.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
+import pro.sky.telegrambot.dto.shelterDto.ShelterResponseDto;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
 import pro.sky.telegrambot.repository.ShelterRepository;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,10 +42,12 @@ public class ShelterService {
                 () -> new EntityNotFoundException("Приют для " + petType + " не найден"));
     }
 
-    public List<Shelter> allShelters () {
-        return shelterRepository.findAll();
+    public List<ShelterResponseDto> allShelters() {
+        return shelterRepository.findAll()
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
-
 
 
     private PetType convertToPetType(String petTypeString) {
@@ -56,6 +60,17 @@ public class ShelterService {
         } catch (IllegalArgumentException e) {
             return PetType.UNKNOWN;
         }
+    }
+
+    private ShelterResponseDto toDto(Shelter shelter) {
+        return new ShelterResponseDto(shelter.getId(),
+                shelter.getPetType(),
+                shelter.getAddress(),
+                shelter.getShelterInfo(),
+                shelter.getShelterSchedule(),
+                shelter.getRouteSchemaUrl(),
+                shelter.getContacts(),
+                shelter.getSafetyPrecautionsAtShelter());
     }
 
 }

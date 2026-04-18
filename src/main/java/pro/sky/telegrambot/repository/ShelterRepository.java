@@ -12,9 +12,5 @@ public interface ShelterRepository extends JpaRepository<Shelter, Long> {
 
    Optional<Shelter> findShelterByPetType(PetType petType);
 
-   default List<Shelter> findAll(){
-      return findAll();
-   }
-
 
 }

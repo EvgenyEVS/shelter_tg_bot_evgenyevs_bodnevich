@@ -2,6 +2,7 @@ package pro.sky.telegrambot.controller;
 
 import org.springframework.web.bind.annotation.*;
 import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
+import pro.sky.telegrambot.dto.shelterDto.ShelterResponseDto;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
 import pro.sky.telegrambot.service.ShelterService;
@@ -20,7 +21,6 @@ public class ShelterController {
 
     @PostMapping("/create")
     public Shelter createShelter(@RequestBody ShelterCreateDto createDto) {
-        System.out.println("Received address: " + (createDto != null ? createDto.address() : "null"));
         return shelterService.createShelter(createDto);
     }
 
@@ -31,7 +31,7 @@ public class ShelterController {
     }
 
     @GetMapping("/all")
-    public List<Shelter> getAllShelters () {
+    public List<ShelterResponseDto> getAllShelters() {
         return shelterService.allShelters();
     }
 }
