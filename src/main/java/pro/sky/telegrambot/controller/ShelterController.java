@@ -1,8 +1,11 @@
 package pro.sky.telegrambot.controller;
 
 import org.springframework.web.bind.annotation.*;
+import pro.sky.telegrambot.dto.shelterDto.ShelterContactsDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
+import pro.sky.telegrambot.dto.shelterDto.ShelterGeneralInfoDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterResponseDto;
+import pro.sky.telegrambot.model.Pet;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
 import pro.sky.telegrambot.service.ShelterService;
@@ -33,5 +36,15 @@ public class ShelterController {
     @GetMapping("/all")
     public List<ShelterResponseDto> getAllShelters() {
         return shelterService.allShelters();
+    }
+
+    @GetMapping("/general_info")
+    public ShelterGeneralInfoDto getGeneralInfo(PetType petType){
+        return shelterService.getGeneralInfo(petType);
+    }
+
+    @GetMapping("/contacts")
+    public ShelterContactsDto getContacts(PetType petType){
+        return shelterService.getContacts(petType);
     }
 }

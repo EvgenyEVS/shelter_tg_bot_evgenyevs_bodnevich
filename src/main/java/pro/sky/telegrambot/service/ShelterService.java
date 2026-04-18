@@ -2,7 +2,9 @@ package pro.sky.telegrambot.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pro.sky.telegrambot.dto.shelterDto.ShelterContactsDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
+import pro.sky.telegrambot.dto.shelterDto.ShelterGeneralInfoDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterResponseDto;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
@@ -42,6 +44,7 @@ public class ShelterService {
                 () -> new EntityNotFoundException("Приют для " + petType + " не найден"));
     }
 
+
     public List<ShelterResponseDto> allShelters() {
         return shelterRepository.findAll()
                 .stream()
@@ -50,6 +53,25 @@ public class ShelterService {
     }
 
 
+    public ShelterGeneralInfoDto getGeneralInfo(PetType petType) {
+        Shelter shelter = shelterRepository.findShelterByPetType(petType)
+                .orElseThrow(() -> new EntityNotFoundException("Приют для " + petType + " не найден"));
+        return new ShelterGeneralInfoDto(
+                shelter.getShelterInfo(), shelter.getAddress());
+    }
+
+
+    public ShelterContactsDto getContacts(PetType petType) {
+        Shelter shelter = shelterRepository.findShelterByPetType(petType)
+                .orElseThrow(() -> new EntityNotFoundException("Приют для " + petType + " не найден"));
+        return new ShelterContactsDto(shelter.getShelterSchedule(),
+                shelter.getRouteSchemaUrl(),
+                shelter.getContacts(),
+                shelter.getSafetyPrecautionsAtShelter());
+    }
+
+
+    //inner methods---------------------
     private PetType convertToPetType(String petTypeString) {
         if (petTypeString == null || petTypeString.isBlank()) {
             return PetType.UNKNOWN;
