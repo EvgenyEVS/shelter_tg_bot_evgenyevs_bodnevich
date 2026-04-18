@@ -1,7 +1,6 @@
 package pro.sky.telegrambot.model;
 
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import pro.sky.telegrambot.model.enums.Gender;
 import pro.sky.telegrambot.model.enums.PetStatus;
 import pro.sky.telegrambot.model.enums.PetType;
@@ -17,6 +16,7 @@ import java.time.LocalDate;
 @Setter
 @EqualsAndHashCode(of = "id")
 @ToString
+@Inheritance
 
 public class Pet {
 
