@@ -7,7 +7,7 @@ import pro.sky.telegrambot.model.Pet;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-18T02:48:37+0300",
+    date = "2026-04-18T23:38:10+0300",
     comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.15 (Amazon.com Inc.)"
 )
 @Component
@@ -29,6 +29,5 @@ public class PetMapperImpl implements PetMapper {
         pet.setPetStatus( dto.petStatus() );
         pet.setHealthInfo( dto.healthInfo() );
         pet.setSpecialNeeds( dto.specialNeeds() );
-        pet.setShelter( dto.shelter() );
     }
 }
