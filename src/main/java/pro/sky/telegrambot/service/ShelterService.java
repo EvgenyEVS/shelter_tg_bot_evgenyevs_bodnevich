@@ -1,68 +1,61 @@
 package pro.sky.telegrambot.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pro.sky.telegrambot.dto.shelterDto.ShelterContactsDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
-import pro.sky.telegrambot.dto.shelterDto.ShelterGeneralInfoDto;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
 import pro.sky.telegrambot.repository.ShelterRepository;
 
 import javax.persistence.EntityNotFoundException;
-import javax.swing.text.html.parser.Entity;
-import javax.validation.constraints.NotNull;
-import java.util.EmptyStackException;
-import java.util.Optional;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ShelterService {
 
     private final ShelterRepository shelterRepository;
 
-    @Autowired
-    public ShelterService(ShelterRepository shelterRepository) {
-        this.shelterRepository = shelterRepository;
-    }
+//    public ShelterService(ShelterRepository shelterRepository) {
+//        this.shelterRepository = shelterRepository;
+//    }
 
-    public Shelter createShelter (ShelterCreateDto createDto) {
+    public Shelter createShelter(ShelterCreateDto createDto) {
+
         Shelter shelter = new Shelter();
-
-        if(createDto.getPetType() != null && !createDto.getPetType().isEmpty()){
-        shelter.setPetType(PetType.valueOf(createDto.getPetType()));}
-        else {shelter.setPetType(PetType.UNKNOWN);}
-
-        shelter.setShelterInfo(createDto.getShelterInfo());
-        shelter.setAddress(createDto.getAddress());
-        shelter.setShelterSchedule(createDto.getShelterSchedule());
-        shelter.setRouteSchemaUrl(createDto.getRouteSchemaUrl());
-        shelter.setContacts(createDto.getContacts());
-        shelter.setSafetyPrecautionsAtShelter(createDto.getSafetyPrecautionsAtShelter());
+        shelter.setPetType(convertToPetType(createDto.petType()));
+        shelter.setAddress(createDto.address());
+        shelter.setShelterInfo(createDto.shelterInfo());
+        shelter.setShelterSchedule(createDto.shelterSchedule());
+        shelter.setRouteSchemaUrl(createDto.routeSchemaUrl());
+        shelter.setContacts(createDto.contacts());
+        shelter.setSafetyPrecautionsAtShelter(createDto.safetyPrecautionsAtShelter());
 
         return shelterRepository.save(shelter);
     }
 
-    public Shelter getShelterByPetType(PetType petType) {
-        return shelterRepository.findShelterByPetType(petType)
-                .orElseThrow(()-> new EntityNotFoundException("Приют для" + petType + "не найден."));
+
+    public Shelter findShelterByPetType(PetType petType) {
+        return shelterRepository.findShelterByPetType(petType).orElseThrow(
+                () -> new EntityNotFoundException("Приют для " + petType + " не найден"));
     }
 
-    public ShelterGeneralInfoDto getGeneralInfo(PetType petType) {
-        Shelter shelter = shelterRepository.findShelterByPetType(petType).orElseThrow();
-        return ShelterGeneralInfoDto.builder()
-                .shelterInfo(shelter.getShelterInfo())
-                .address(shelter.getAddress())
-                .build();
+    public List<Shelter> allShelters () {
+        return shelterRepository.findAll();
     }
 
-    public ShelterContactsDto getContacts(PetType petType){
-        Shelter shelter = shelterRepository.findShelterByPetType(petType).orElseThrow();
-        return ShelterContactsDto.builder()
-                .shelterSchedule(shelter.getShelterSchedule())
-                .routeSchemaUrl(shelter.getRouteSchemaUrl())
-                .contacts(shelter.getContacts())
-                .safetyPrecautionsAtShelter(shelter.getSafetyPrecautionsAtShelter())
-                .build();
+
+
+    private PetType convertToPetType(String petTypeString) {
+        if (petTypeString == null || petTypeString.isBlank()) {
+            return PetType.UNKNOWN;
+        }
+
+        try {
+            return PetType.valueOf(petTypeString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return PetType.UNKNOWN;
+        }
     }
 
 }

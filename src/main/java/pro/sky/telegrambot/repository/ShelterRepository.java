@@ -5,9 +5,16 @@ import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 public interface ShelterRepository extends JpaRepository<Shelter, Long> {
 
-    Optional<Shelter> findShelterByPetType(PetType petType);
+   Optional<Shelter> findShelterByPetType(PetType petType);
+
+   default List<Shelter> findAll(){
+      return findAll();
+   }
+
+
 }
