@@ -13,10 +13,15 @@ public class ShelterInfoService {
     private final ShelterService shelterService;
 
     public String getFullInfo(PetType petType) {
-        Shelter shelter = shelterService.getShelterByPetType(petType);
+        Shelter shelter = shelterService.findShelterByPetType(petType);
         ShelterGeneralInfoDto general = shelterService.getGeneralInfo(petType);
         ShelterContactsDto contacts = shelterService.getContacts(petType);
         return String.format("🏢 %s\n📍 Адрес: %s\n🕒 Режим работы: %s\n📞 Контакты: %s\n🗺 Схема проезда: %s\n⚠️ Правила безопасности: %s",
-                general.getShelterInfo(), general.getAddress(), contacts.getShelterSchedule(), contacts.getContacts(), contacts.getRouteSchemaUrl(),contacts.getSafetyPrecautionsAtShelter());
+                general.shelterInfo(),
+                general.address(),
+                contacts.shelterSchedule(),
+                contacts.contacts(),
+                contacts.routeSchemaUrl(),
+                contacts.safetyPrecautionsAtShelter());
     }
 }
