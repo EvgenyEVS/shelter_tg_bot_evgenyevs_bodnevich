@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(of = "id")
 @ToString
 @Inheritance
-
+@Table (name = "pets")
 public class Pet {
 
     @Id
@@ -27,7 +27,7 @@ public class Pet {
     @Enumerated(EnumType.STRING)
     private PetType petType = PetType.UNKNOWN;
 
-    private String name;
+    private String petName;
     private LocalDate birthDay;
 
     @Enumerated(EnumType.STRING)

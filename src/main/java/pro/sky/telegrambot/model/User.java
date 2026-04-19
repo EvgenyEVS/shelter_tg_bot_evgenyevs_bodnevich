@@ -48,7 +48,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus = UserStatus.NON_ACTIVE;
 
-    private boolean volunter = false;
+    private boolean volunteer = false;
 
     @Enumerated(EnumType.STRING)
     private UserDialogState dialogState = UserDialogState.START;

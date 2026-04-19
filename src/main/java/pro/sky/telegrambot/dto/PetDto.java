@@ -24,7 +24,7 @@ public record PetDto(
 
         @NotBlank(message = "Name не может быть пустым")
         @Size(min = 2, max = 30, message = "Name должно быть от 2 до 30 символов")
-        String name,
+        String petName,
 
         @Past(message = "BirthDay не может быть из будущего")
         LocalDate birthDay,
