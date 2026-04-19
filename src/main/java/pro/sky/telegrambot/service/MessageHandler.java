@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.control.MappingControl;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.dto.UserDto;
 import pro.sky.telegrambot.model.User;
@@ -51,6 +52,15 @@ public class MessageHandler {
         User user = userService.getOrCreateUser(chatId, message.from());
         String text = message.text();
 
+        if (user.getSelectedShelterType() == PetType.UNKNOWN) {
+            if (text != null && (text.equals("Кошки")) || (text.equals("Собаки"))) {
+                processShelterChoice(chatId, user, text);
+            } else {
+                askToChooseShelterType(chatId);
+            }
+            return;
+        }
+
         if (text != null && text.startsWith("/")) {
             processCommand(chatId, user, text);
         } else if (text != null) {
@@ -63,7 +73,12 @@ public class MessageHandler {
     private void processCommand(Long chatId, User user, String command) {
         switch (command) {
             case "/start":
-                sendMainMenu(chatId);
+                //sendMainMenu(chatId);
+                if (user.getSelectedShelterType() != PetType.UNKNOWN) {
+                    sendMainMenu(chatId);
+                } else {
+                    askToChooseShelterType(chatId);
+                }
                 break;
             case "/shelter_info":
                 askPetType(chatId, "shelter_info");
@@ -85,6 +100,43 @@ public class MessageHandler {
             default:
                 sendMainMenu(chatId);
         }
+    }
+
+    public void askToChooseShelterType(Long chatId) {
+        String welcomeMessage = """
+                Добро пожаловать! Я бот приюта для животных "Самый лучший приют Астаны".
+                
+                Далее я смогу Вам помочь:
+                * дать общую информацию о приюте
+                * подобрать питомца, помочь с документами и усыновлением
+                * отправлять отчеты и помогать стать счастливее)))
+                
+                Для начала давайте выберем приют. Кто для Вас интереснее? :
+                """;
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup(
+                new String[]{"Кошки"},
+                new String[]{"Собаки"}
+        );
+        keyboardMarkup.resizeKeyboard(true);
+        sendMessage(chatId, welcomeMessage, keyboardMarkup);
+    }
+
+    private void processShelterChoice(Long chatId, User user, String choice) {
+        PetType selectedPetType;
+
+        if (choice.contains("Кошки")) {
+            selectedPetType = PetType.CAT;
+            sendMessage(chatId, "Вы выбрали приют для кошек. \n" +
+                    "Дальше можно узнать про приют больше и наконец-то стать достойным рабом, \n " +
+                    "чтобы служить великолепной гордой кошке!");
+        } else {
+            selectedPetType = PetType.DOG;
+            sendMessage(chatId, "Вы выбрали приют для собак. \n" +
+                    "Дальше можно узнать про приют больше и наконец-то завести любимую собаку-барабаку!");
+        }
+        user.setSelectedShelterType(selectedPetType);
+        user.setDialogState(User.UserDialogState.START);
+        userService.updateUser(user.getId(), convertToDto(user));
     }
 
     private void processDialogState(Long chatId, User user, String text) {
@@ -140,13 +192,15 @@ public class MessageHandler {
     }
 
     private void askPetType(Long chatId, String action) {
-        com.pengrad.telegrambot.request.SendMessage request = new com.pengrad.telegrambot.request.SendMessage(chatId, "Выберите тип животного:");
-        com.pengrad.telegrambot.model.request.InlineKeyboardMarkup markup = new com.pengrad.telegrambot.model.request.InlineKeyboardMarkup(
-                new com.pengrad.telegrambot.model.request.InlineKeyboardButton("🐶 Собака").callbackData(action + "_DOG"),
-                new com.pengrad.telegrambot.model.request.InlineKeyboardButton("🐱 Кошка").callbackData(action + "_CAT")
-        );
-        request.replyMarkup(markup);
-        telegramBot.execute(request);
+        User user = userService.getUserByChatId(chatId);
+        PetType selectedPetType = user.getSelectedShelterType();
+
+        if (action.equals("shelter_info")) {
+            String info = shelterInfoService.getFullInfo(selectedPetType);
+            sendMessage(chatId, info);
+        } else if (action.equals("adoption_advice")) {
+            sendAdoptionMenu(chatId, selectedPetType);
+        }
     }
 
     public void handleCallback(com.pengrad.telegrambot.model.CallbackQuery callback) {
@@ -195,13 +249,37 @@ public class MessageHandler {
 
     private static class ReportTempData {
         String photoUrl, diet, health, behavior;
-        void setPhotoUrl(String url) { this.photoUrl = url; }
-        void setDiet(String d) { this.diet = d; }
-        void setHealth(String h) { this.health = h; }
-        void setBehavior(String b) { this.behavior = b; }
-        String getPhotoUrl() { return photoUrl; }
-        String getDiet() { return diet; }
-        String getHealth() { return health; }
-        String getBehavior() { return behavior; }
+
+        void setPhotoUrl(String url) {
+            this.photoUrl = url;
+        }
+
+        void setDiet(String d) {
+            this.diet = d;
+        }
+
+        void setHealth(String h) {
+            this.health = h;
+        }
+
+        void setBehavior(String b) {
+            this.behavior = b;
+        }
+
+        String getPhotoUrl() {
+            return photoUrl;
+        }
+
+        String getDiet() {
+            return diet;
+        }
+
+        String getHealth() {
+            return health;
+        }
+
+        String getBehavior() {
+            return behavior;
+        }
     }
 }

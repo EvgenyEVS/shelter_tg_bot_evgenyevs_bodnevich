@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS users
     last_name VARCHAR(50),
     age INTEGER,
     phone_number VARCHAR(50),
+    selected_shelter_type VARCHAR(50),
     user_status VARCHAR(50),
     volunteer BOOLEAN DEFAULT FALSE,
     dialog_state VARCHAR(50),
