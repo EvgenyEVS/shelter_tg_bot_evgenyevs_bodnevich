@@ -7,8 +7,8 @@ import pro.sky.telegrambot.model.Pet;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-18T23:38:10+0300",
-    comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.15 (Amazon.com Inc.)"
+    date = "2026-04-19T20:09:39+0300",
+    comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.15 (Microsoft)"
 )
 @Component
 public class PetMapperImpl implements PetMapper {
@@ -22,7 +22,7 @@ public class PetMapperImpl implements PetMapper {
         pet.setPetDescription( dto.pet_description() );
         pet.setId( dto.id() );
         pet.setPetType( dto.petType() );
-        pet.setName( dto.name() );
+        pet.setPetName( dto.petName() );
         pet.setBirthDay( dto.birthDay() );
         pet.setGender( dto.gender() );
         pet.setCastratedOrSpayed( dto.castratedOrSpayed() );

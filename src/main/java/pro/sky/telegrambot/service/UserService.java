@@ -23,7 +23,7 @@ public class UserService {
             newUser.setFirstName(tgUser.firstName());
             newUser.setLastName(tgUser.lastName());
             newUser.setUserStatus(User.UserStatus.NON_ACTIVE);
-            newUser.setVolunter(false);
+            newUser.setVolunteer(false);
             newUser.setDialogState(User.UserDialogState.START);
             return userRepository.save(newUser);
         });
@@ -63,7 +63,7 @@ public class UserService {
     }
 
     public List<User> getVolunteers() {
-        return userRepository.findByVolunterTrue();
+        return userRepository.findByVolunteerTrue();
     }
 
     private void mapDtoToEntity(UserDto dto, User entity) {
