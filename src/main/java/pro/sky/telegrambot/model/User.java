@@ -1,6 +1,7 @@
 package pro.sky.telegrambot.model;
 
 import lombok.*;
+import pro.sky.telegrambot.model.enums.PetType;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -41,6 +42,9 @@ public class User {
 
     @Pattern(regexp = "^\\+7-9\\d{2}-\\d{3}-\\d{2}-\\d{2}$", message = "Номер телефона должен быть в формате +7-9XX-XXX-XX-XX")
     private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    private PetType selectedShelterType = PetType.UNKNOWN;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Pet> pets = new HashSet<>();
