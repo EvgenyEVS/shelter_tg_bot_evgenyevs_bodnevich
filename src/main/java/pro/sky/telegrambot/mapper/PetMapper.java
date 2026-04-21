@@ -10,5 +10,6 @@ import pro.sky.telegrambot.model.Pet;
 public interface PetMapper {
     @Mapping(target = "petDescription", source = "pet_description")
     @Mapping(target = "owner", ignore = true)
+    @Mapping(target = "shelter", ignore = true)
     void updatePetFromDto(PetDto dto, @MappingTarget Pet pet);
 }
