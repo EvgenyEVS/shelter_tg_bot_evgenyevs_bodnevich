@@ -77,9 +77,12 @@ class MessageHandlerTest {
         when(message.text()).thenReturn("Кошки");
 
         pro.sky.telegrambot.model.User appUser = new pro.sky.telegrambot.model.User();
+        appUser.setId(1L);
+        appUser.setChatId(123L);
         appUser.setSelectedShelterType(PetType.UNKNOWN);
         when(userService.getOrCreateUser(eq(123L), any())).thenReturn(appUser);
-        when(userService.updateUser(anyLong(), any())).thenReturn(appUser);
+        when(userService.updateUser(eq(1L), any(pro.sky.telegrambot.dto.UserDto.class)))
+                .thenReturn(appUser);
 
         messageHandler.handleMessage(message);
 

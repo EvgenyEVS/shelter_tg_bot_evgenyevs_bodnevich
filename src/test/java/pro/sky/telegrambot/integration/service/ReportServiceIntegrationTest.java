@@ -64,6 +64,7 @@ class ReportServiceIntegrationTest {
         assertThat(saved.getDiet()).isEqualTo("diet content");
         assertThat(saved.getHealthAndAdaptation()).isEqualTo("health content");
         assertThat(saved.getBehaviorChanges()).isEqualTo("behavior content");
+        assertThat(saved.getReportDate()).isEqualTo(LocalDate.now());
         assertThat(saved.isReviewed()).isFalse();
         assertThat(saved.getVolunteerFeedback()).isNull();
     }
@@ -74,6 +75,8 @@ class ReportServiceIntegrationTest {
                 .user(testUser)
                 .reportDate(LocalDate.now())
                 .diet("test")
+                .submittedAt(LocalDate.now().atStartOfDay())
+                .reviewed(false)
                 .build();
         reportRepository.save(report);
 
@@ -87,11 +90,26 @@ class ReportServiceIntegrationTest {
     @Test
     void getUnreviewedReports_shouldReturnOnlyUnreviewed() {
         Report reviewed = Report.builder()
-                .user(testUser).reviewed(true).diet("reviewed").build();
+                .user(testUser)
+                .reviewed(true)
+                .diet("reviewed")
+                .reportDate(LocalDate.now())
+                .submittedAt(LocalDate.now().atStartOfDay())
+                .build();
         Report unreviewed1 = Report.builder()
-                .user(testUser).reviewed(false).diet("unreviewed1").build();
+                .user(testUser)
+                .reviewed(false)
+                .diet("unreviewed1")
+                .reportDate(LocalDate.now())
+                .submittedAt(LocalDate.now().atStartOfDay())
+                .build();
         Report unreviewed2 = Report.builder()
-                .user(testUser).reviewed(false).diet("unreviewed2").build();
+                .user(testUser)
+                .reviewed(false)
+                .diet("unreviewed2")
+                .reportDate(LocalDate.now())
+                .submittedAt(LocalDate.now().atStartOfDay())
+                .build();
         reportRepository.save(reviewed);
         reportRepository.save(unreviewed1);
         reportRepository.save(unreviewed2);
@@ -107,7 +125,12 @@ class ReportServiceIntegrationTest {
     @Test
     void markAsReviewed_shouldUpdateFlag() {
         Report report = Report.builder()
-                .user(testUser).reviewed(false).build();
+                .user(testUser)
+                .reviewed(false)
+                .reportDate(LocalDate.now())
+                .submittedAt(LocalDate.now().atStartOfDay())
+                .diet("test")
+                .build();
         report = reportRepository.save(report);
 
         reportService.markAsReviewed(report.getId());
@@ -128,6 +151,8 @@ class ReportServiceIntegrationTest {
                 .user(testUser)
                 .diet("special diet")
                 .reviewed(false)
+                .reportDate(LocalDate.now())
+                .submittedAt(LocalDate.now().atStartOfDay())
                 .build();
         report = reportRepository.save(report);
 
@@ -144,6 +169,9 @@ class ReportServiceIntegrationTest {
         Report report = Report.builder()
                 .user(testUser)
                 .reviewed(false)
+                .reportDate(LocalDate.now())
+                .submittedAt(LocalDate.now().atStartOfDay())
+                .diet("test")
                 .build();
         report = reportRepository.save(report);
         String feedback = "Please provide more details about diet";
@@ -152,6 +180,7 @@ class ReportServiceIntegrationTest {
 
         Report updated = reportRepository.findById(report.getId()).orElseThrow();
         assertThat(updated.getVolunteerFeedback()).isEqualTo(feedback);
+        assertThat(updated.isReviewed()).isTrue();
         verify(telegramBot).execute(any(SendMessage.class));
     }
 
