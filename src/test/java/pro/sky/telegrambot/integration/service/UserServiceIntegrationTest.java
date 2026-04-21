@@ -1,8 +1,10 @@
 package pro.sky.telegrambot.integration.service;
 
+import com.pengrad.telegrambot.TelegramBot;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.UserDto;
@@ -20,6 +22,9 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 @Transactional
 class UserServiceIntegrationTest {
+
+    @MockBean
+    private TelegramBot telegramBot;
 
     @Autowired
     private UserService userService;

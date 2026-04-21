@@ -35,6 +35,7 @@ class ShelterServiceTest {
         ShelterCreateDto dto = new ShelterCreateDto("CAT", "Address", "Info", "9-18", "http://map", "+7-999-123-44-55", "Safety");
         Shelter saved = new Shelter();
         saved.setId(1L);
+        saved.setPetType(PetType.CAT);
         when(shelterRepository.save(any(Shelter.class))).thenReturn(saved);
         Shelter result = shelterService.createShelter(dto);
         assertThat(result.getId()).isEqualTo(1L);
