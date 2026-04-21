@@ -65,7 +65,7 @@ class MessageHandlerTest {
         ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
         verify(telegramBot, atLeastOnce()).execute(captor.capture());
         String text = captor.getValue().getParameters().get("text").toString();
-        assertThat(text).contains("выбрать приют"); // проверьте точное сообщение
+        assertThat(text).contains("Для начала давайте выберем приют");
     }
 
     @Test
@@ -102,5 +102,7 @@ class MessageHandlerTest {
         messageHandler.handleCallback(callback);
 
         verify(telegramBot, atLeastOnce()).execute(any(SendMessage.class));
+        verify(userService, never()).getOrCreateUser(anyLong(), any());
+
     }
 }

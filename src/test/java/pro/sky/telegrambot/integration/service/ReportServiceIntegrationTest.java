@@ -19,6 +19,7 @@ import pro.sky.telegrambot.service.ReportService;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -187,6 +188,6 @@ class ReportServiceIntegrationTest {
     @Test
     void sendVolunteerFeedback_reportNotFound_throwsException() {
         assertThatThrownBy(() -> reportService.sendVolunteerFeedback(999L, "feedback"))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isInstanceOf(NoSuchElementException.class);
     }
 }
