@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequestMapping("/pets")
 public class PetController {
 
-    PetService petService;
+    private final PetService petService;
 
     public PetController(PetService petService) {
         this.petService = petService;
@@ -51,8 +51,10 @@ public class PetController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Pet> getById(Long id) {
-        return petService.getPetById(id);
+    public ResponseEntity<Pet> getById(@PathVariable Long id) {
+        return petService.getPetById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/cats")
@@ -71,7 +73,7 @@ public class PetController {
     }
 
     @PutMapping("/{id}")
-    public Pet updatePet(Long id, PetDto petDto) {
+    public Pet updatePet(@PathVariable Long id, @Valid @RequestBody PetDto petDto) {
         return petService.updatePet(id, petDto);
     }
 

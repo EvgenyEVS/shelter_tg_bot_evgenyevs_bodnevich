@@ -31,7 +31,7 @@ public record PetDto(
 
         Gender gender,
 
-        boolean castratedOrSpayed,
+        Boolean castratedOrSpayed,
         PetStatus petStatus,
         String pet_description,
         String healthInfo,

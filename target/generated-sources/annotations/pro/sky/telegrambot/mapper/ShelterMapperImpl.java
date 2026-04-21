@@ -8,8 +8,8 @@ import pro.sky.telegrambot.model.enums.PetType;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-20T00:13:21+0300",
-    comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.15 (Microsoft)"
+    date = "2026-04-21T03:52:30+0300",
+    comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.15 (Amazon.com Inc.)"
 )
 @Component
 public class ShelterMapperImpl implements ShelterMapper {
