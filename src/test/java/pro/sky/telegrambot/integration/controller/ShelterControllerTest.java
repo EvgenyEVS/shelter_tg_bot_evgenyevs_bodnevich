@@ -1,22 +1,16 @@
 package pro.sky.telegrambot.integration.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pengrad.telegrambot.TelegramBot;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import pro.sky.telegrambot.controller.ShelterController;
 import pro.sky.telegrambot.dto.shelterDto.*;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
-import pro.sky.telegrambot.service.AdoptionService;
-import pro.sky.telegrambot.service.ShelterInfoService;
 import pro.sky.telegrambot.service.ShelterService;
 
 import java.util.List;
@@ -26,9 +20,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest  // ← Вместо @WebMvcTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
+@WebMvcTest(ShelterController.class)
 class ShelterControllerTest {
 
     @Autowired
@@ -39,15 +31,6 @@ class ShelterControllerTest {
 
     @MockBean
     private ShelterService shelterService;
-
-    @MockBean
-    private AdoptionService adoptionService;
-
-    @MockBean
-    private ShelterInfoService shelterInfoService;
-
-    @MockBean
-    private TelegramBot telegramBot;
 
     @Test
     void createShelter_shouldReturnSavedShelter() throws Exception {

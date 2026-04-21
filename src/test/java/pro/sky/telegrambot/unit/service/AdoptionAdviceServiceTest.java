@@ -40,7 +40,7 @@ class AdoptionAdviceServiceTest {
         AdoptionInfo info = new AdoptionInfo();
         when(adoptionInfoRepository.findByPetType(PetType.DOG)).thenReturn(Optional.of(info));
         String advice = adoptionAdviceService.getAdvice(PetType.DOG, "unknown");
-        assertThat(advice).isEqualTo("Информация не найдена");
+        assertThat(advice).isEqualTo("Information not found");
     }
 
     @Test

@@ -3,12 +3,8 @@ package pro.sky.telegrambot.integration.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-//import pro.sky.telegrambot.config.TestJpaConfig;
 import pro.sky.telegrambot.model.Pet;
 import pro.sky.telegrambot.model.User;
 import pro.sky.telegrambot.model.enums.PetType;
@@ -19,9 +15,6 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest
-@ActiveProfiles("test")
-//@ContextConfiguration(classes = TestJpaConfig.class)
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class PetRepositoryTest {
 
     @Autowired
