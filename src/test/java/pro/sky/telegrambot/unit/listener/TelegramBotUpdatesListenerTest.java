@@ -33,8 +33,8 @@ class TelegramBotUpdatesListenerTest {
     void process_shouldHandleMessage() {
         Update update = mock(Update.class);
         Message message = mock(Message.class);
-        when(update.message()).thenReturn(message);
-        when(update.callbackQuery()).thenReturn(null);
+        lenient().when(update.message()).thenReturn(message);
+        lenient().when(update.callbackQuery()).thenReturn(null);
 
         int result = listener.process(List.of(update));
 

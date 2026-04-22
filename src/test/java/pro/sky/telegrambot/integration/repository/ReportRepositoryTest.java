@@ -3,8 +3,12 @@ package pro.sky.telegrambot.integration.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+//import pro.sky.telegrambot.config.TestJpaConfig;
 import pro.sky.telegrambot.model.Report;
 import pro.sky.telegrambot.model.User;
 import pro.sky.telegrambot.repository.ReportRepository;
@@ -15,6 +19,9 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest
+@ActiveProfiles("test")
+//@ContextConfiguration(classes = TestJpaConfig.class)
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ReportRepositoryTest {
 
     @Autowired
@@ -48,9 +55,30 @@ class ReportRepositoryTest {
 
     @Test
     void findByReviewedFalse_shouldReturnUnreviewed() {
-        Report reviewed = Report.builder().user(user).reviewed(true).build();
-        Report unreviewed1 = Report.builder().user(user).reviewed(false).build();
-        Report unreviewed2 = Report.builder().user(user).reviewed(false).build();
+        Report reviewed = Report.builder()
+                .user(user)
+                .reviewed(true)
+                .reportDate(LocalDate.now())
+                .submittedAt(LocalDate.now().atStartOfDay())
+                .diet("test")
+                .build();
+        Report unreviewed1 = Report.builder()
+                .user(user)
+                .reviewed(false)
+                .reportDate(LocalDate.now())
+                .submittedAt(LocalDate.now().atStartOfDay())
+                .diet("test1")
+                .build();
+        Report unreviewed2 = Report.builder()
+                .user(user)
+                .reviewed(false)
+                .reportDate(LocalDate.now())
+                .submittedAt(LocalDate.now().atStartOfDay())
+                .diet("test2")
+                .build();
+//        Report reviewed = Report.builder().user(user).reviewed(true).build();
+//        Report unreviewed1 = Report.builder().user(user).reviewed(false).build();
+//        Report unreviewed2 = Report.builder().user(user).reviewed(false).build();
         entityManager.persist(reviewed);
         entityManager.persist(unreviewed1);
         entityManager.persist(unreviewed2);

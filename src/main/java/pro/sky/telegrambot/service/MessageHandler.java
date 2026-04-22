@@ -113,6 +113,7 @@ public class MessageHandler {
                 
                 Для начала давайте выберем приют. Кто для Вас интереснее? :
                 """;
+        sendMessage(chatId, "Пожалуйста, выберите приют:");
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup(
                 new String[]{"Кошки"},
                 new String[]{"Собаки"}
