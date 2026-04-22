@@ -59,7 +59,7 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long id) {
-        userRepository.delete(getUserByChatId(id));
+        userRepository.deleteById(id);
     }
 
     public List<User> getVolunteers() {

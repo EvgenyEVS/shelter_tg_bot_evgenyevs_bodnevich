@@ -3,6 +3,7 @@ package pro.sky.telegrambot.service;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.ReportDto;
@@ -14,6 +15,7 @@ import pro.sky.telegrambot.repository.UserRepository;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,8 +67,10 @@ public class ReportService {
 
     @Transactional
     public void sendVolunteerFeedback(Long reportId, String feedback) {
-        Report report = reportRepository.findById(reportId).orElseThrow();
+        Report report = reportRepository.findById(reportId).orElseThrow(
+                () -> new NoSuchElementException("Report not found with id: " + reportId));
         report.setVolunteerFeedback(feedback);
+        report.setReviewed(true);
         reportRepository.save(report);
 
         String message = "Уважаемый усыновитель, мы заметили, что ты заполняешь отчет не так подробно, как необходимо. " +

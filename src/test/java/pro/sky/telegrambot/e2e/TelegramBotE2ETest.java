@@ -1,19 +1,24 @@
 package pro.sky.telegrambot.e2e;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pengrad.telegrambot.TelegramBot;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import pro.sky.telegrambot.dto.UserDto;
 import pro.sky.telegrambot.model.User;
 import pro.sky.telegrambot.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+@ActiveProfiles("e2etest")
 class TelegramBotE2ETest {
 
     @Autowired
@@ -25,11 +30,23 @@ class TelegramBotE2ETest {
     @MockBean
     private TelegramBot telegramBot;
 
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+    }
+
     @Test
     void fullUserJourney_shelterChoiceAndReport() throws Exception {
         Long testChatId = 999L;
 
-        User user = userRepository.findByChatId(testChatId).orElse(null);
-        assertThat(user).isNull();
+        UserDto userDto = new UserDto(testChatId, "@reporter", "Rep", "Ort",
+                25, "+7-999-555-44-33", User.UserStatus.ADOPTER);
+
+        // Получаем ответ как String, чтобы увидеть ошибку
+        ResponseEntity<String> createResponse = restTemplate.postForEntity("/users", userDto, String.class);
+        System.out.println("Response status: " + createResponse.getStatusCode());
+        System.out.println("Response body: " + createResponse.getBody());
+
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 }
