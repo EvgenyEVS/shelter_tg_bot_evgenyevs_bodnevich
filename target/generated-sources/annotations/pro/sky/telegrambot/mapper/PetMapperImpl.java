@@ -7,7 +7,7 @@ import pro.sky.telegrambot.model.Pet;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-23T21:30:14+0300",
+    date = "2026-04-23T23:31:45+0300",
     comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.15 (Microsoft)"
 )
 @Component

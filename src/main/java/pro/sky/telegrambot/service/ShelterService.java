@@ -1,11 +1,14 @@
 package pro.sky.telegrambot.service;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.dto.shelterDto.ShelterContactsDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterGeneralInfoDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterResponseDto;
+import pro.sky.telegrambot.mapper.ShelterMapper;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
 import pro.sky.telegrambot.repository.ShelterRepository;
@@ -18,11 +21,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ShelterService {
 
+    private static final Logger log = LoggerFactory.getLogger(ShelterService.class);
     private final ShelterRepository shelterRepository;
-
-//    public ShelterService(ShelterRepository shelterRepository) {
-//        this.shelterRepository = shelterRepository;
-//    }
+    private final ShelterMapper shelterMapper;
 
     public Shelter createShelter(ShelterCreateDto createDto) {
 
@@ -36,6 +37,15 @@ public class ShelterService {
         shelter.setSafetyPrecautionsAtShelter(createDto.safetyPrecautionsAtShelter());
 
         return shelterRepository.save(shelter);
+    }
+
+    public ShelterResponseDto updateShelter (Long id, ShelterCreateDto createDto) {
+        Shelter shelter = shelterRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Приют с ID = " + id + " не найден в БД.")
+        );
+        shelterMapper.updateShelterFromDto(createDto, shelter);
+        Shelter saved = shelterRepository.save(shelter);
+        return shelterMapper.toResponseDto(saved);
     }
 
 
@@ -68,6 +78,29 @@ public class ShelterService {
                 shelter.getRouteSchemaUrl(),
                 shelter.getContacts(),
                 shelter.getSafetyPrecautionsAtShelter());
+    }
+
+    public Shelter getShelterById (Long id) {
+        return shelterRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Приют с ID = " + id + " не найден в БД")
+        );
+    }
+
+    public boolean deleteShelterIfEmpty (Long id){
+        Shelter shelter = shelterRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Приют с ID = " + id + " не найден в БД"));
+
+        if(!shelter.getPets().isEmpty()) {
+            log.info("Приют с " + id + " не удален, т.к. содержит питомцев. Сначала очистите приют");
+            return false;
+        }
+
+        shelter.getPets().forEach(pet -> pet.setShelter(null));
+        shelter.getPets().clear();
+
+        shelterRepository.delete(shelter);
+        log.info("Приют с " + id + " успешно удален");
+        return true;
     }
 
 
