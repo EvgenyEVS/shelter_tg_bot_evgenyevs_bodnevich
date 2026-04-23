@@ -3,12 +3,13 @@ package pro.sky.telegrambot.mapper;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
+import pro.sky.telegrambot.dto.shelterDto.ShelterResponseDto;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-23T21:30:13+0300",
+    date = "2026-04-23T23:31:44+0300",
     comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.15 (Microsoft)"
 )
 @Component
@@ -53,5 +54,34 @@ public class ShelterMapperImpl implements ShelterMapper {
         shelter.setRouteSchemaUrl( dto.routeSchemaUrl() );
         shelter.setContacts( dto.contacts() );
         shelter.setSafetyPrecautionsAtShelter( dto.safetyPrecautionsAtShelter() );
+    }
+
+    @Override
+    public ShelterResponseDto toResponseDto(Shelter shelter) {
+        if ( shelter == null ) {
+            return null;
+        }
+
+        PetType petType = null;
+        Long id = null;
+        String address = null;
+        String shelterInfo = null;
+        String shelterSchedule = null;
+        String routeSchemaUrl = null;
+        String contacts = null;
+        String safetyPrecautionsAtShelter = null;
+
+        petType = shelter.getPetType();
+        id = shelter.getId();
+        address = shelter.getAddress();
+        shelterInfo = shelter.getShelterInfo();
+        shelterSchedule = shelter.getShelterSchedule();
+        routeSchemaUrl = shelter.getRouteSchemaUrl();
+        contacts = shelter.getContacts();
+        safetyPrecautionsAtShelter = shelter.getSafetyPrecautionsAtShelter();
+
+        ShelterResponseDto shelterResponseDto = new ShelterResponseDto( id, petType, address, shelterInfo, shelterSchedule, routeSchemaUrl, contacts, safetyPrecautionsAtShelter );
+
+        return shelterResponseDto;
     }
 }
