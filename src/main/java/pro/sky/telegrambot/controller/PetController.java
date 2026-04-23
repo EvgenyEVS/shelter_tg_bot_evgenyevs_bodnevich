@@ -1,5 +1,6 @@
 package pro.sky.telegrambot.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -38,6 +39,7 @@ public class PetController {
             )
     })
     @PostMapping
+    @Operation(summary = "Создание питомца и добавление в БД. Обязательные поля: petType(CAT, DOG), имя.")
     public Pet createPet(
             @Valid
             @RequestBody
@@ -46,11 +48,13 @@ public class PetController {
     }
 
     @GetMapping()
+    @Operation(summary = "Получить всех питомцев из БД")
     public ResponseEntity<List<Pet>> getAllPets() {
         return ResponseEntity.ok(petService.getAllPets());
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Получить определенного питомца из БД по ID")
     public ResponseEntity<Pet> getById(@PathVariable Long id) {
         return petService.getPetById(id)
                 .map(ResponseEntity::ok)
@@ -58,26 +62,38 @@ public class PetController {
     }
 
     @GetMapping("/cats")
+    @Operation(summary = "Получить всех CAT из БД")
     public ResponseEntity<List<Pet>> getCats() {
         return ResponseEntity.ok(petService.getCats());
     }
 
     @GetMapping("/dogs")
+    @Operation(summary = "Получить всех DOG из БД")
     public ResponseEntity<List<Pet>> getDogs() {
         return ResponseEntity.ok(petService.getDogs());
     }
 
     @GetMapping("/unknown_type")
+    @Operation(summary = "Получить всех UNKNOWN из БД")
     public ResponseEntity<List<Pet>> getUnknown() {
         return ResponseEntity.ok(petService.getUnknown());
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Редактировать питомца в БД по ID")
     public Pet updatePet(@PathVariable Long id, @Valid @RequestBody PetDto petDto) {
         return petService.updatePet(id, petDto);
     }
 
+    @DeleteMapping("{id}")
+    @Operation(summary = "Удаление питомца из БД")
+    public String deletePet (@PathVariable Long id) {
+       return petService.deletePet(id);
+    }
+
     @PutMapping("/{id}/assign_shelter")
+    @Operation(summary = "Автоматическое присваивание питомцу поля Shelter(приют) " +
+            "в соответствии с присвоенным питомцу PetType. Поиск в БД по ID.")
     public ResponseEntity<Pet> assignShelter(@PathVariable Long id) {
         Pet updatePet = petService.automaticallyAssignShelterByPetType(id);
         return ResponseEntity.ok(updatePet);

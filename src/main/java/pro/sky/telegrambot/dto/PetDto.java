@@ -31,6 +31,5 @@ public record PetDto(
         String pet_description,
         String healthInfo,
         String specialNeeds
-
 ) {
 }
