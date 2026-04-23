@@ -77,5 +77,10 @@ public class PetController {
         return petService.updatePet(id, petDto);
     }
 
+    @PutMapping("/{id}/assign_shelter")
+    public ResponseEntity<Pet> assignShelter(@PathVariable Long id) {
+        Pet updatePet = petService.automaticallyAssignShelterByPetType(id);
+        return ResponseEntity.ok(updatePet);
+    }
 
 }

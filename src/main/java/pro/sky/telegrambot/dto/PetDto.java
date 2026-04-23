@@ -1,9 +1,4 @@
 package pro.sky.telegrambot.dto;
-
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import pro.sky.telegrambot.model.Pet;
-import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.Gender;
 import pro.sky.telegrambot.model.enums.PetStatus;
 import pro.sky.telegrambot.model.enums.PetType;
@@ -37,7 +32,5 @@ public record PetDto(
         String healthInfo,
         String specialNeeds
 
-    //    @JsonIgnore
-    //    Shelter shelter
 ) {
 }
