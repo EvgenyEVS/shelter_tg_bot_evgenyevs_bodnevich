@@ -84,6 +84,13 @@ public class PetService {
         return petRepository.save(pet);
     }
 
+    public String deletePet (Long id){
+        if (petRepository.existsById(id)) {
+        petRepository.deleteById(id);
+        return "Питомец с ID = " + id + " удален из БД";
+        }else return "Питомец с ID = " + id + " не найден в БД";
+    }
+
         public Pet automaticallyAssignShelterByPetType(Long id) {
         Pet pet = petRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Питомец с ID = " + id + "не найден в БД"));
