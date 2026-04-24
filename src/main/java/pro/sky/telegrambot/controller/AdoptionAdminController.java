@@ -3,12 +3,14 @@ package pro.sky.telegrambot.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.telegrambot.service.AdoptionService;
 
 @RestController
 @RequestMapping("/admin/adoptions")
 @RequiredArgsConstructor
+@Validated
 public class AdoptionAdminController {
     private final AdoptionService adoptionService;
 

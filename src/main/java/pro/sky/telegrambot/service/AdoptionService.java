@@ -65,4 +65,19 @@ public class AdoptionService {
         adoption.setProbationStatus(Adoption.ProbationStatus.FAILED);
         adoptionRepository.save(adoption);
     }
+
+    // Refactoring новый метод сброс пропущенных дней при отправке отчета
+    @Transactional
+    public void resetMissedDaysForUser(User user) {
+        List<Adoption.ProbationStatus> activeStatuses = Arrays.asList(
+                Adoption.ProbationStatus.IN_PROGRESS,
+                Adoption.ProbationStatus.EXTENDED_14,
+                Adoption.ProbationStatus.EXTENDED_30
+        );
+        adoptionRepository.findByUserAndProbationStatusIn(user, activeStatuses)
+                .ifPresent(adoption -> {
+                    adoption.setMissedDays(0);
+                    adoptionRepository.save(adoption);
+                });
+    }
 }

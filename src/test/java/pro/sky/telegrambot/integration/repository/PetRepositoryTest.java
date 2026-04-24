@@ -81,9 +81,10 @@ class PetRepositoryTest {
         cat.setPetName("Tom");
         Pet saved = entityManager.persistAndFlush(cat);
 
-        Pet found = petRepository.findCatById(saved.getId());
+        Pet found = petRepository.findById(saved.getId()).orElse(null);
         assertThat(found).isNotNull();
         assertThat(found.getPetType()).isEqualTo(PetType.CAT);
+        assertThat(found.getPetName()).isEqualTo("Tom");
     }
 
     @Test

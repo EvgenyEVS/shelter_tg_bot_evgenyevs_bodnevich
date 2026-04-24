@@ -29,10 +29,10 @@ public class ReportReminderScheduler {
                 telegramBot.execute(new SendMessage(user.getChatId(), "📝 Пожалуйста, пришлите ежедневный отчёт о питомце."));
                 int missed = adoption.getMissedDays() + 1;
                 adoption.setMissedDays(missed);
+                adoptionService.save(adoption);
                 if (missed >= 2) {
                     volunteerService.notifyAboutMissedReports(user);
                 }
-                adoptionService.save(adoption);
             }
         }
     }

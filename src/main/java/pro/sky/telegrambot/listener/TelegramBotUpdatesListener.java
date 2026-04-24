@@ -5,22 +5,21 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import pro.sky.telegrambot.service.MessageHandler;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-@Service
+@Component
 public class TelegramBotUpdatesListener implements UpdatesListener {
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
     private final TelegramBot telegramBot;
-    private final MessageHandler messageHandler;
+    private final TelegramFacade telegramFacade;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, MessageHandler messageHandler) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, MessageHandler messageHandler, TelegramFacade telegramFacade) {
         this.telegramBot = telegramBot;
-        this.messageHandler = messageHandler;
+        this.telegramFacade = telegramFacade;
     }
 
     @PostConstruct
@@ -32,14 +31,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public int process(List<Update> updates) {
         updates.forEach(update -> {
             try {
-                if (update.message() != null) {
-                    messageHandler.handleMessage(update.message());
-                } else if (update.callbackQuery() != null) {
-                    messageHandler.handleCallback(update.callbackQuery());
+                telegramFacade.processUpdate(update);
+                } catch (Exception e) {
+                    logger.error("Error processing update ", e);
                 }
-            } catch (Exception e) {
-                logger.error("Error processing update", e);
-            }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }

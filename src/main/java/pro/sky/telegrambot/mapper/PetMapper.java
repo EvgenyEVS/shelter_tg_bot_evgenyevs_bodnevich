@@ -12,4 +12,8 @@ public interface PetMapper {
     @Mapping(target = "owner", ignore = true)
     @Mapping(target = "shelter", ignore = true)
     void updatePetFromDto(PetDto dto, @MappingTarget Pet pet);
+
+    // Новый метод обратное преобразование Pet -> PetDto
+    @Mapping(source = "petDescription", target = "pet_description")
+    PetDto toDto(Pet pet);
 }

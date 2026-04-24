@@ -21,9 +21,8 @@ public class TelegramBotConfiguration {
             matchIfMissing = true
     )
     public TelegramBot telegramBot() {
-        TelegramBot bot = new TelegramBot(token);
-        bot.execute(new DeleteMyCommands());
-        return bot;
+        //TelegramBot bot = new TelegramBot(token);
+        //bot.execute(new DeleteMyCommands()); - это сбрасывает меню команд закоментировано при Refactoring
+        return new TelegramBot(token);
     }
-
 }
