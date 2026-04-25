@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AdoptionRepository extends JpaRepository<Adoption, Long> {
-    Optional<Adoption> findByUserAndProbationStatus(User user, Adoption.ProbationStatus status);
     List<Adoption> findByProbationStatus(Adoption.ProbationStatus status);
     List<Adoption> findByProbationEndDateBefore(LocalDate date);
     List<Adoption> findByProbationStatusIn(List<Adoption.ProbationStatus> statuses);

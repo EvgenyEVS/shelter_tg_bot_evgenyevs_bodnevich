@@ -16,9 +16,8 @@ public class AdoptionAdminController {
 
     @PostMapping("/{adoptionId}/extend")
     @Operation(summary = "Продлить испытательный срок")
-    public ResponseEntity<Void> extendProbation(@PathVariable Long adoptionId, @RequestParam int days) {
+    public void extendProbation(@PathVariable Long adoptionId, @RequestParam int days) {
         adoptionService.extendProbation(adoptionId, days);
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{adoptionId}/pass")
