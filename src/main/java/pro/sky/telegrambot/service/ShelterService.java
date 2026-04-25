@@ -1,13 +1,14 @@
 package pro.sky.telegrambot.service;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.shelterDto.ShelterContactsDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterGeneralInfoDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterResponseDto;
+import pro.sky.telegrambot.exception.ShelterNotEmptyException;
 import pro.sky.telegrambot.mapper.ShelterMapper;
 import pro.sky.telegrambot.model.Shelter;
 import pro.sky.telegrambot.model.enums.PetType;
@@ -17,115 +18,81 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShelterService {
 
-    private static final Logger log = LoggerFactory.getLogger(ShelterService.class);
     private final ShelterRepository shelterRepository;
     private final ShelterMapper shelterMapper;
 
+    @Transactional
     public Shelter createShelter(ShelterCreateDto createDto) {
-
-        Shelter shelter = new Shelter();
+        Shelter shelter = shelterMapper.toEntity(createDto);
         shelter.setPetType(convertToPetType(createDto.petType()));
-        shelter.setAddress(createDto.address());
-        shelter.setShelterInfo(createDto.shelterInfo());
-        shelter.setShelterSchedule(createDto.shelterSchedule());
-        shelter.setRouteSchemaUrl(createDto.routeSchemaUrl());
-        shelter.setContacts(createDto.contacts());
-        shelter.setSafetyPrecautionsAtShelter(createDto.safetyPrecautionsAtShelter());
-
         return shelterRepository.save(shelter);
     }
 
-    public ShelterResponseDto updateShelter (Long id, ShelterCreateDto createDto) {
-        Shelter shelter = shelterRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Приют с ID = " + id + " не найден в БД.")
-        );
+    @Transactional
+    public ShelterResponseDto updateShelter(Long id, ShelterCreateDto createDto) {
+        Shelter shelter = shelterRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Приют с ID " + id + " не найден"));
         shelterMapper.updateShelterFromDto(createDto, shelter);
         Shelter saved = shelterRepository.save(shelter);
         return shelterMapper.toResponseDto(saved);
     }
 
-
+    @Transactional(readOnly = true)
     public Shelter findShelterByPetType(PetType petType) {
-        return shelterRepository.findShelterByPetType(petType).orElseThrow(
-                () -> new EntityNotFoundException("Приют для " + petType + " не найден"));
+        return shelterRepository.findShelterByPetType(petType)
+                .orElseThrow(() -> new EntityNotFoundException("Приют для " + petType + " не найден"));
     }
 
-
+    @Transactional(readOnly = true)
     public List<ShelterResponseDto> allShelters() {
-        return shelterRepository.findAll()
-                .stream()
-                .map(this::toDto)
+        return shelterRepository.findAll().stream()
+                .map(shelterMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-
+    @Transactional(readOnly = true)
     public ShelterGeneralInfoDto getGeneralInfo(PetType petType) {
-        Shelter shelter = shelterRepository.findShelterByPetType(petType)
-                .orElseThrow(() -> new EntityNotFoundException("Приют для " + petType + " не найден"));
-        return new ShelterGeneralInfoDto(
-                shelter.getShelterInfo(), shelter.getAddress());
+        Shelter shelter = findShelterByPetType(petType);
+        return new ShelterGeneralInfoDto(shelter.getShelterInfo(), shelter.getAddress());
     }
 
-
+    @Transactional(readOnly = true)
     public ShelterContactsDto getContacts(PetType petType) {
-        Shelter shelter = shelterRepository.findShelterByPetType(petType)
-                .orElseThrow(() -> new EntityNotFoundException("Приют для " + petType + " не найден"));
+        Shelter shelter = findShelterByPetType(petType);
         return new ShelterContactsDto(shelter.getShelterSchedule(),
                 shelter.getRouteSchemaUrl(),
                 shelter.getContacts(),
                 shelter.getSafetyPrecautionsAtShelter());
     }
 
-    public Shelter getShelterById (Long id) {
-        return shelterRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Приют с ID = " + id + " не найден в БД")
-        );
+    @Transactional(readOnly = true)
+    public Shelter getShelterById(Long id) {
+        return shelterRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Приют с ID " + id + " не найден"));
     }
 
-    public boolean deleteShelterIfEmpty (Long id){
-        Shelter shelter = shelterRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Приют с ID = " + id + " не найден в БД"));
-
-        if(!shelter.getPets().isEmpty()) {
-            log.info("Приют с " + id + " не удален, т.к. содержит питомцев. Сначала очистите приют");
-            return false;
+    @Transactional
+    public void deleteShelterIfEmpty(Long id) {
+        Shelter shelter = getShelterById(id);
+        if (!shelter.getPets().isEmpty()) {
+            log.warn("Приют с ID {} не удалён, есть питомцы", id);
+            throw new ShelterNotEmptyException("Приют содержит питомцев. Сначала очистите приют.");
         }
-
-        shelter.getPets().forEach(pet -> pet.setShelter(null));
-        shelter.getPets().clear();
-
         shelterRepository.delete(shelter);
-        log.info("Приют с " + id + " успешно удален");
-        return true;
+        log.info("Приют с ID {} удалён", id);
     }
 
-
-    //inner methods---------------------
     private PetType convertToPetType(String petTypeString) {
-        if (petTypeString == null || petTypeString.isBlank()) {
-            return PetType.UNKNOWN;
-        }
-
+        if (petTypeString == null || petTypeString.isBlank()) return PetType.UNKNOWN;
         try {
             return PetType.valueOf(petTypeString.toUpperCase());
         } catch (IllegalArgumentException e) {
             return PetType.UNKNOWN;
         }
     }
-
-    private ShelterResponseDto toDto(Shelter shelter) {
-        return new ShelterResponseDto(shelter.getId(),
-                shelter.getPetType(),
-                shelter.getAddress(),
-                shelter.getShelterInfo(),
-                shelter.getShelterSchedule(),
-                shelter.getRouteSchemaUrl(),
-                shelter.getContacts(),
-                shelter.getSafetyPrecautionsAtShelter());
-    }
-
 }

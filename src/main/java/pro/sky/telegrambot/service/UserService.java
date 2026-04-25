@@ -2,18 +2,20 @@ package pro.sky.telegrambot.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.UserDto;
+import pro.sky.telegrambot.mapper.UserMapper;
 import pro.sky.telegrambot.model.User;
 import pro.sky.telegrambot.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public User getOrCreateUser(Long chatId, com.pengrad.telegrambot.model.User tgUser) {
         return userRepository.findByChatId(chatId).orElseGet(() -> {
@@ -31,20 +33,22 @@ public class UserService {
 
     @Transactional
     public User createUser(UserDto dto) {
-        User user = new User();
-        mapDtoToEntity(dto, user);
+        User user = userMapper.toEntity(dto);
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден: " + id));
     }
 
+    @Transactional(readOnly = true)
     public User getUserByChatId(Long chatId) {
         return userRepository.findByChatId(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким chatId не найден: " + chatId));
@@ -53,7 +57,7 @@ public class UserService {
     @Transactional
     public User updateUser(Long id, UserDto dto) {
         User user = getUserById(id);
-        mapDtoToEntity(dto, user);
+        userMapper.updateFromDto(dto, user);
         return userRepository.save(user);
     }
 
@@ -62,17 +66,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<User> getVolunteers() {
         return userRepository.findByVolunteerTrue();
-    }
-
-    private void mapDtoToEntity(UserDto dto, User entity) {
-        entity.setChatId(dto.getChatId());
-        entity.setTelegramUserName(dto.getTelegramUserName());
-        entity.setFirstName(dto.getFirstName());
-        entity.setLastName(dto.getLastName());
-        entity.setAge(dto.getAge());
-        entity.setPhoneNumber(dto.getPhoneNumber());
-        entity.setUserStatus(dto.getUserStatus() != null ? dto.getUserStatus() : User.UserStatus.NON_ACTIVE);
     }
 }

@@ -25,6 +25,7 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final UserRepository userRepository;
     private final TelegramBot telegramBot;
+    private final AdoptionService adoptionService;
 
     public void saveReport(Long chatId, String photoUrl, String diet, String health, String behavior) {
         User user = userRepository.findByChatId(chatId).orElseThrow();
@@ -39,6 +40,8 @@ public class ReportService {
                 .reviewed(false)
                 .build();
         reportRepository.save(report);
+
+        adoptionService.resetMissedDaysForUser(user); // сброс накопленных пропусков Refactoring
     }
 
     public boolean hasReportForDate(User user, LocalDate date) {

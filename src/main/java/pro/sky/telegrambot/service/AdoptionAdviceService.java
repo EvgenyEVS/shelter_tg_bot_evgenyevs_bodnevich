@@ -17,30 +17,38 @@ public class AdoptionAdviceService {
     private final AdoptionInfoRepository adoptionInfoRepository;
 
     public String getAdvice(PetType petType, String adviceType) {
-        AdoptionInfo info = adoptionInfoRepository.findByPetType(petType).orElseThrow(() -> new EntityNotFoundException("Никаких советов для: "+ petType));
-        switch (adviceType) {
-            case "before": return info.getAdviceBefore();
-            case "documents": return info.getDocumentSet();
-            case "transport": return info.getAdviceTransport();
-            case "home_child": return info.getAdviceHomeForChild();
-            case "home_adult": return info.getAdviceHomeForAdult();
-            case "home_disabled": return info.getAdviceHomeForDisabilities();
-            case "refusal": return info.getRefusalSet();
-            default: return "Информация не найдена";
-        }
+        AdoptionInfo info = adoptionInfoRepository.findByPetType(petType)
+                .orElseThrow(() -> new EntityNotFoundException("Никаких советов для: "+ petType));
+        return switch (adviceType) {
+            case "before" -> info.getAdviceBefore();
+            case "documents" -> info.getDocumentSet();
+            case "transport" -> info.getAdviceTransport();
+            case "home_child" -> info.getAdviceHomeForChild();
+            case "home_adult" -> info.getAdviceHomeForAdult();
+            case "home_disabled" -> info.getAdviceHomeForDisabilities();
+            case "refusal" -> info.getRefusalSet();
+            default -> "Информация не найдена";
+        };
     }
 
     public String getDogSpecificAdvice(String type) {
-        AdoptionInfoDog dogInfo = (AdoptionInfoDog) adoptionInfoRepository.findByPetType(PetType.DOG).orElseThrow();
-        if ("communication".equals(type)) return dogInfo.getDogPrimaryCommunication();
-        if ("trainers".equals(type)) return dogInfo.getDogTrainers();
-        return "";
+        AdoptionInfo info = adoptionInfoRepository.findByPetType(PetType.DOG)
+                .orElseThrow(() -> new EntityNotFoundException("Нет информации для собак"));
+        if (!(info instanceof AdoptionInfoDog dogInfo)) {
+            throw new IllegalStateException("Неверный тип информации в БД для собак");
+        }
+        return "communication".equals(type) ? dogInfo.getDogPrimaryCommunication() :
+                "trainers".equals(type) ? dogInfo.getDogTrainers() : "";
     }
 
+
     public String getCatSpecificAdvice(String type) {
-        AdoptionInfoCat catInfo = (AdoptionInfoCat) adoptionInfoRepository.findByPetType(PetType.CAT).orElseThrow();
-        if ("communication".equals(type)) return catInfo.getCatPrimaryCommunication();
-        if ("trainers".equals(type)) return catInfo.getCatTrainers();
-        return "";
+        AdoptionInfo info = adoptionInfoRepository.findByPetType(PetType.DOG)
+                .orElseThrow(() -> new EntityNotFoundException("Нет информации для кошек"));;
+        if (!(info instanceof AdoptionInfoCat catInfo)) {
+            throw new IllegalStateException("Неверный тип информации в БД для кошек");
+        }
+        return "communication".equals(type) ? catInfo.getCatPrimaryCommunication() :
+                "trainers".equals(type) ? catInfo.getCatTrainers() : "";
     }
 }

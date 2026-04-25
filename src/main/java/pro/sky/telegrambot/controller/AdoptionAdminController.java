@@ -3,20 +3,21 @@ package pro.sky.telegrambot.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.telegrambot.service.AdoptionService;
 
 @RestController
 @RequestMapping("/admin/adoptions")
 @RequiredArgsConstructor
+@Validated
 public class AdoptionAdminController {
     private final AdoptionService adoptionService;
 
     @PostMapping("/{adoptionId}/extend")
     @Operation(summary = "Продлить испытательный срок")
-    public ResponseEntity<Void> extendProbation(@PathVariable Long adoptionId, @RequestParam int days) {
+    public void extendProbation(@PathVariable Long adoptionId, @RequestParam int days) {
         adoptionService.extendProbation(adoptionId, days);
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{adoptionId}/pass")

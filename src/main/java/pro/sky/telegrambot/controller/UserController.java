@@ -10,11 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.telegrambot.dto.UserDto;
+import pro.sky.telegrambot.mapper.UserMapper;
 import pro.sky.telegrambot.model.User;
 import pro.sky.telegrambot.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -22,50 +24,47 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    @Operation(summary = "Создать нового пользователя")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Пользователь создан",
-                    content = @Content(schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные")
-    })
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody UserDto userDto) {
+    @Operation(summary = "Создать пользователя")
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
         User created = userService.createUser(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(created));
     }
 
-    @Operation(summary = "Получить всех пользователей")
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    @Operation(summary = "Все пользователи")
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> dtos = userService.getAllUsers().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
-    @Operation(summary = "Получить пользователя по ID")
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    @Operation(summary = "Получить по ID")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
-    @Operation(summary = "Найти пользователя по chatId")
     @GetMapping("/byChatId")
-    public ResponseEntity<User> getUserByChatId(@RequestParam Long chatId) {
-        return ResponseEntity.ok(userService.getUserByChatId(chatId));
+    @Operation(summary = "Найти по chatId")
+    public ResponseEntity<UserDto> getUserByChatId(@RequestParam Long chatId) {
+        User user = userService.getUserByChatId(chatId);
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
-    @Operation(summary = "Обновить пользователя по ID")
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id,
-                                           @Valid @RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.updateUser(id, userDto));
+    @Operation(summary = "Обновить")
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
+        User updated = userService.updateUser(id, userDto);
+        return ResponseEntity.ok(userMapper.toDto(updated));
     }
 
-    @Operation(summary = "Удалить пользователя по ID")
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удалить")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
