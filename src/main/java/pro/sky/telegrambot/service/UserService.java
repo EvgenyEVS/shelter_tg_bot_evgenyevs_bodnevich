@@ -5,6 +5,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.UserDto;
 import pro.sky.telegrambot.mapper.UserMapper;
@@ -21,6 +22,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     @CachePut(value = "userByChatId", key = "#result.chatId")
+    @Transactional
     public User getOrCreateUser(Long chatId, com.pengrad.telegrambot.model.User tgUser) {
         return userRepository.findByChatId(chatId).orElseGet(() -> {
             User newUser = new User();
@@ -62,29 +64,29 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким chatId не найден: " + chatId));
     }
 
-    @Transactional
-    @CacheEvict(value = "userByChatId", key = "#dto.chatId")
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @CacheEvict(value = {"userByChatId", "userById", "allUsers", "volunteers"}, allEntries = true)
     public User updateUser(Long id, UserDto dto) {
         User user = getUserById(id);
         userMapper.updateFromDto(dto, user);
         return userRepository.save(user);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @CacheEvict(value = {"userByChatId", "userById", "allUsers", "volunteers"}, allEntries = true)
     public void deleteUser(Long id) {
         User user = getUserById(id);
         Long chatId = user.getChatId();
         userRepository.deleteById(id);
-        clearUserCache(chatId);
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "volunteers", unless = "#result.isEmpty()")
+    @CacheEvict(value = {"userByChatId", "userById", "allUsers", "volunteers"}, allEntries = true)
     public List<User> getVolunteers() {
         return userRepository.findByVolunteerTrue();
     }
 
 
-    @CacheEvict(value = {"userByChatId", "userById", "allUsers", "volunteers"}, key = "#chatId")
+    @CacheEvict(value = {"userByChatId", "userById", "allUsers", "volunteers"}, allEntries = true)
     public void clearUserCache(Long chatId) {}
 }

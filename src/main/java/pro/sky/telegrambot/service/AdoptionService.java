@@ -2,6 +2,7 @@ package pro.sky.telegrambot.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.model.Adoption;
 import pro.sky.telegrambot.model.User;
@@ -17,6 +18,7 @@ import java.util.List;
 public class AdoptionService {
     private final AdoptionRepository adoptionRepository;
 
+    @Transactional(readOnly = true)
     public List<Adoption> getActiveAdoptions() {
         return adoptionRepository.findByProbationStatusIn(
                 Arrays.asList(
@@ -27,16 +29,17 @@ public class AdoptionService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<Adoption> findByProbationEndDateBefore(LocalDate date) {
         return adoptionRepository.findByProbationEndDateBefore(date);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Adoption save(Adoption adoption) {
         return adoptionRepository.save(adoption);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void extendProbation(Long adoptionId, int days) {
         Adoption adoption = adoptionRepository.findById(adoptionId)
                 .orElseThrow(() -> new EntityNotFoundException("Усыновление не найдено"));
@@ -49,7 +52,7 @@ public class AdoptionService {
         adoptionRepository.save(adoption);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void passProbation(Long adoptionId) {
         Adoption adoption = adoptionRepository.findById(adoptionId)
                 .orElseThrow(() -> new EntityNotFoundException("Усыновление не найдено"));
@@ -58,7 +61,7 @@ public class AdoptionService {
         adoptionRepository.save(adoption);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void failProbation(Long adoptionId) {
         Adoption adoption = adoptionRepository.findById(adoptionId)
                 .orElseThrow(() -> new EntityNotFoundException("Усыновление не найдено"));
@@ -67,7 +70,7 @@ public class AdoptionService {
     }
 
     // Refactoring новый метод сброс пропущенных дней при отправке отчета
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetMissedDaysForUser(User user) {
         List<Adoption.ProbationStatus> activeStatuses = Arrays.asList(
                 Adoption.ProbationStatus.IN_PROGRESS,

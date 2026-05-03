@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.PetDto;
 import pro.sky.telegrambot.mapper.PetMapper;
@@ -19,7 +20,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class PetService {
 
     private final PetRepository petRepository;

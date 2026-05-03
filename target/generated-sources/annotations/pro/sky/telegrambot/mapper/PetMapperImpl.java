@@ -11,7 +11,7 @@ import pro.sky.telegrambot.model.enums.PetType;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-29T23:53:07+0300",
+    date = "2026-05-03T23:22:30+0300",
     comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.15 (Microsoft)"
 )
 @Component

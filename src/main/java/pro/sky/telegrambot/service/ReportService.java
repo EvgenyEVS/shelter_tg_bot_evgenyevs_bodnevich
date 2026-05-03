@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.ReportDto;
 import pro.sky.telegrambot.model.Report;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class ReportService {
 
     private final ReportRepository reportRepository;
@@ -44,6 +46,7 @@ public class ReportService {
         adoptionService.resetMissedDaysForUser(user); // сброс накопленных пропусков Refactoring
     }
 
+    @Transactional(readOnly = true)
     public boolean hasReportForDate(User user, LocalDate date) {
         return reportRepository.existsByUserAndReportDate(user, date);
     }
@@ -55,7 +58,7 @@ public class ReportService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void markAsReviewed(Long id) {
         Report report = reportRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Отчет не найден: " + id));
@@ -68,7 +71,7 @@ public class ReportService {
         return toDto(reportRepository.findById(id).orElseThrow());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void sendVolunteerFeedback(Long reportId, String feedback) {
         Report report = reportRepository.findById(reportId).orElseThrow(
                 () -> new NoSuchElementException("Report not found with id: " + reportId));

@@ -5,6 +5,8 @@ import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.model.Adoption;
 import pro.sky.telegrambot.model.User;
 
@@ -20,6 +22,7 @@ public class ReportReminderScheduler {
     private final TelegramBot telegramBot;
 
     @Scheduled(cron = "0 0 21 * * *")
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void remindMissingReports() {
         List<Adoption> active = adoptionService.getActiveAdoptions();
         for (Adoption adoption : active) {
@@ -38,6 +41,7 @@ public class ReportReminderScheduler {
     }
 
     @Scheduled(cron = "0 0 8 * * *")
+    @Transactional(readOnly = true)
     public void checkProbationPeriods() {
         List<Adoption> ending = adoptionService.findByProbationEndDateBefore(LocalDate.now());
         for (Adoption adoption : ending) {
