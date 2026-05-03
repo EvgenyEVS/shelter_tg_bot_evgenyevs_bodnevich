@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.shelterDto.ShelterContactsDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterCreateDto;
@@ -23,12 +24,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class ShelterService {
 
     private final ShelterRepository shelterRepository;
     private final ShelterMapper shelterMapper;
 
-    @Transactional
     @CacheEvict(value = {"shelterByType", "shelterGeneralInfo", "shelterContacts",
             "allShelters", "shelterById", "shelterInfo"},
             allEntries = true)
@@ -38,7 +39,7 @@ public class ShelterService {
         return shelterRepository.save(shelter);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     @CacheEvict(value = {"shelterByType", "shelterGeneralInfo", "shelterContacts",
             "allShelters", "shelterById", "shelterInfo"},
             allEntries = true)
@@ -89,7 +90,7 @@ public class ShelterService {
                 .orElseThrow(() -> new EntityNotFoundException("Приют с ID " + id + " не найден"));
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @CacheEvict(value = {"shelterByType", "shelterGeneralInfo", "shelterContacts",
             "allShelters", "shelterById", "shelterInfo"},
             allEntries = true)
