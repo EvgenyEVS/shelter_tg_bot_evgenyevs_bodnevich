@@ -1,6 +1,8 @@
 package pro.sky.telegrambot.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.telegrambot.dto.PetDto;
@@ -30,6 +32,7 @@ public class PetService {
         this.shelterRepository = shelterRepository;
     }
 
+    @CacheEvict(value = {"allPets", "cats", "dogs", "unknown"}, allEntries = true)
     public Pet addPet(PetDto petDto) {
         Pet pet = new Pet();
         petMapper.updatePetFromDto(petDto, pet);
@@ -37,21 +40,25 @@ public class PetService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "allPets")
     public List<Pet> getAllPets() {
         return petRepository.findAll();
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "petById", key = "#id")
     public Optional<Pet> getPetById(Long id) {
         return petRepository.findById(id);
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "cats")
     public List<Pet> getCats() {
         return petRepository.findByPetType(PetType.CAT);
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "dogs")
     public List<Pet> getDogs() {
         return petRepository.findByPetType(PetType.DOG);
     }
@@ -61,6 +68,8 @@ public class PetService {
         return petRepository.findByPetType(PetType.UNKNOWN);
     }
 
+    @CacheEvict(value = {"allPets", "cats", "dogs", "unknown", "petById"},
+            allEntries = true)
     public Pet updatePet(Long id, PetDto dto) {
         Pet pet = petRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
@@ -68,6 +77,8 @@ public class PetService {
         return petRepository.save(pet);
     }
 
+    @CacheEvict(value = {"allPets", "cats", "dogs", "unknown", "petById"},
+            allEntries = true)
     public void deletePet(Long id) {
         if (!petRepository.existsById(id)) {
             throw new EntityNotFoundException("Питомец с ID = " + id + " не найден");
@@ -75,6 +86,8 @@ public class PetService {
         petRepository.deleteById(id);
     }
 
+    @CacheEvict(value = {"allPets", "cats", "dogs", "unknown", "petById"},
+            allEntries = true)
     public Pet automaticallyAssignShelterByPetType(Long id) {
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Питомец с ID = " + id + " не найден"));

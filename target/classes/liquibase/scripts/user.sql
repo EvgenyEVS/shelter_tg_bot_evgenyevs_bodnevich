@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS users
     user_status VARCHAR(50),
     volunteer BOOLEAN DEFAULT FALSE,
     dialog_state VARCHAR(50),
-    adoptional_start_date DATE
+    adoptional_start_date TIMESTAMP
     );
 
 ALTER TABLE pets ADD CONSTRAINT fk_pets_shelter
@@ -94,4 +94,32 @@ CREATE TABLE IF NOT EXISTS adoptions
 CREATE INDEX idx_adoptions_user_id ON adoptions(user_id);
 CREATE INDEX idx_adoptions_pet_id ON adoptions(pet_id);
 CREATE INDEX idx_adoptions_status ON adoptions(probation_status);
+
+-- changeset evs:3
+CREATE TABLE IF NOT EXISTS adoption_info
+(
+    id BIGSERIAL PRIMARY KEY,
+    pet_type VARCHAR(50),
+    advice_before TEXT,
+    document_set TEXT,
+    advice_transport TEXT,
+    advice_home_for_child TEXT,
+    advice_home_for_adult TEXT,
+    advice_home_for_disabilities TEXT,
+    refusal_set TEXT
+    );
+
+CREATE TABLE IF NOT EXISTS adoption_info_cat
+(
+    id BIGSERIAL PRIMARY KEY,
+    cat_primary_communication TEXT,
+    cat_trainers TEXT
+);
+
+CREATE TABLE IF NOT EXISTS adoption_info_dog
+(
+    id BIGSERIAL PRIMARY KEY,
+    dog_primary_communication TEXT,
+    dog_trainers TEXT
+);
 

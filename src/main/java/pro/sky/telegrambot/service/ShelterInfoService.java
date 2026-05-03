@@ -1,6 +1,7 @@
 package pro.sky.telegrambot.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.dto.shelterDto.ShelterContactsDto;
 import pro.sky.telegrambot.dto.shelterDto.ShelterGeneralInfoDto;
@@ -12,6 +13,7 @@ import pro.sky.telegrambot.model.enums.PetType;
 public class ShelterInfoService {
     private final ShelterService shelterService;
 
+    @Cacheable(value = "shelterInfo", key = "#type")
     public String getFullInfo(PetType petType) {
         Shelter shelter = shelterService.findShelterByPetType(petType);
         ShelterGeneralInfoDto general = shelterService.getGeneralInfo(petType);
